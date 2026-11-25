@@ -1,6 +1,10 @@
 import { Divider, Flex, Grid, HStack, Icon, IconButton, Stack, Text, VStack } from '@chakra-ui/react';
 import Link from 'next/link'
-import { At, InstagramLogo, MapPinLine, TwitterLogo, WhatsappLogo } from 'phosphor-react';
+import { At, InstagramLogo, MapPinLine, Phone, TwitterLogo } from 'phosphor-react';
+
+const MAP_LINK = 'https://maps.app.goo.gl/Zt71whZAomiLi1CRA?g_st=ac'
+const MAP_EMBED = 'https://maps.google.com/maps?q=10.020346,123.420904&z=16&output=embed'
+const PHONE = '09637130812'
 import { useSelector } from 'react-redux';
 
 const Footer = () => {
@@ -191,24 +195,33 @@ const Footer = () => {
                             weight={'duotone'}
                         />
                         <Text
+                            as={'a'}
+                            href={MAP_LINK}
+                            target={'_blank'}
+                            rel={'noopener noreferrer'}
                             color={'white'}
                             fontWeight={'normal'}
-                            fontSize={'sm'}>
-                            Lagos, Nigeria
+                            fontSize={'sm'}
+                            textDecoration={'underline'}
+                            _hover={{ color: 'gold.500' }}>
+                            Cebu, Philippines (open in Google Maps)
                         </Text>
                     </HStack>
                     <HStack>
                         <Icon
-                            as={WhatsappLogo}
+                            as={Phone}
                             color={'white'}
                             boxSize={5}
                             weight={'duotone'}
                         />
                         <Text
+                            as={'a'}
+                            href={`tel:${PHONE}`}
                             color={'white'}
                             fontWeight={'normal'}
-                            fontSize={'sm'}>
-                            +2349123456789
+                            fontSize={'sm'}
+                            _hover={{ color: 'gold.500' }}>
+                            0963 713 0812
                         </Text>
                     </HStack>
                     <HStack>
@@ -225,6 +238,19 @@ const Footer = () => {
                             urbaninteriors@mail.com
                         </Text>
                     </HStack>
+
+                    <Flex
+                        as={'iframe'}
+                        title={'Cebu Urban Interiors location map'}
+                        src={MAP_EMBED}
+                        loading={'lazy'}
+                        referrerPolicy={'no-referrer-when-downgrade'}
+                        width={{ base: '280px', md: '320px' }}
+                        height={'200px'}
+                        border={0}
+                        rounded={'md'}
+                        mt={2}
+                    />
 
                     <Stack
                         direction={'row'}
