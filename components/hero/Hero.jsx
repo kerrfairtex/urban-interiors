@@ -14,18 +14,19 @@ import hero08 from '../../public/hero/hero-08.jpg'
 import hero09 from '../../public/hero/hero-09.jpg'
 import hero10 from '../../public/hero/hero-10.jpg'
 
-// CC0 interior photos of wooden furniture; sources in ./photo-sources.md
+// Pexels photos (free commercial license), one or more per "Browse by Category"
+// item; sources in ./photo-sources.md
 const heroPhotos = [
-    { src: hero01, alt: 'Bedroom with a warm wooden headboard wall' },
-    { src: hero02, alt: 'Living room with a rustic wooden coffee table' },
-    { src: hero03, alt: 'Solid wood dining table with a wooden bench' },
-    { src: hero04, alt: 'Lounge with wood-panelled walls overlooking a lake' },
-    { src: hero05, alt: 'Patterned armchair with a wooden side table' },
-    { src: hero06, alt: 'Living room with a dark wooden coffee table and fireplace' },
-    { src: hero07, alt: 'Modern lounge with wooden-framed chairs' },
-    { src: hero08, alt: 'Sunroom with a wooden ceiling and furniture' },
-    { src: hero09, alt: 'Grey sofa with a wooden coffee table' },
-    { src: hero10, alt: 'Dining room with a wooden table and upholstered chairs' }
+    { src: hero01, alt: 'Sofa: leather sofa with a solid wood side table' },
+    { src: hero02, alt: 'Bed: wooden bed frame in a wood-panelled bedroom' },
+    { src: hero03, alt: 'TV console: light wood TV console with open shelving' },
+    { src: hero04, alt: 'Table and chair: modern wooden dining table with chairs' },
+    { src: hero05, alt: 'Wardrobe: open wooden wardrobe with drawers and shelves' },
+    { src: hero06, alt: 'Shelf: tall wooden bookshelf with a library ladder' },
+    { src: hero07, alt: 'Shoe rack: rustic wooden shoe rack' },
+    { src: hero08, alt: 'Doors: wooden doors in wood-panelled walls' },
+    { src: hero09, alt: 'Sofa: minimalist sofa beside a wooden sideboard' },
+    { src: hero10, alt: 'Table and chair: live-edge wooden dining table with chairs' }
 ]
 
 const SLIDE_INTERVAL_MS = 3000
