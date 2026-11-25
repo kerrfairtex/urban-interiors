@@ -6,6 +6,7 @@ import { connect } from "react-redux"
 import { addNewProduct } from "../../store/addProductReducer"
 
 import { AddProductValidation } from '../../utils/validate'
+import { CATEGORIES } from '../../utils/categories'
 
 const UploadProduct = ({ uploadNewProduct }) => {
 
@@ -195,14 +196,9 @@ const UploadProduct = ({ uploadNewProduct }) => {
                             <MenuList minWidth='240px' fontSize={'sm'}>
                                 <MenuOptionGroup defaultValue={'bed'} title='Choose furniture type' type='radio'
                                     onChange={(e) => setProduct(prevProd => ({ ...prevProd, category: e }))}>
-                                    <MenuItemOption value={'sofa'}>Sofa</MenuItemOption>
-                                    <MenuItemOption value={'bed'}>Bed</MenuItemOption>
-                                    <MenuItemOption value={'shoe-rack'}>Shoe Rack</MenuItemOption>
-                                    <MenuItemOption value={'ward-robe'}>Ward Robe</MenuItemOption>
-                                    <MenuItemOption value={'shelf'}>Shelf</MenuItemOption>
-                                    <MenuItemOption value={'tv-console'}>TV Console</MenuItemOption>
-                                    <MenuItemOption value={'table-and-chair'}>Table and chair</MenuItemOption>
-                                    <MenuItemOption value={'doors'}>Doors</MenuItemOption>
+                                    {CATEGORIES.map(c => (
+                                        <MenuItemOption key={c.slug} value={c.slug}>{c.title}</MenuItemOption>
+                                    ))}
                                 </MenuOptionGroup>
                             </MenuList>
                         </Menu>

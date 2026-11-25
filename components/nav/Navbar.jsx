@@ -8,6 +8,7 @@ import { connect, useDispatch, useSelector } from 'react-redux'
 import { signOut } from '../../store/logoutReducer'
 
 import { searchProducts } from '../../store/searchReducer'
+import { CATEGORIES } from '../../utils/categories'
 
 const Navbar = ({ search }) => {
     const router = useRouter()
@@ -370,46 +371,14 @@ const Navbar = ({ search }) => {
                                                 </h2>
                                                 <AccordionPanel>
                                                     <VStack alignItems={'start'}>
-                                                        <Link
-                                                            as={NextLink}
-                                                            href={'/sofa'}>
-                                                            Sofa
-                                                        </Link>
-                                                        <Link
-                                                            as={NextLink}
-                                                            href={'/bed'}>
-                                                            Bed
-                                                        </Link>
-                                                        <Link
-                                                            as={NextLink}
-                                                            href={'/shoe-rack'}>
-                                                            Shoe Rack
-                                                        </Link>
-                                                        <Link
-                                                            as={NextLink}
-                                                            href={'/ward-robe'}>
-                                                            Ward Robe
-                                                        </Link>
-                                                        <Link
-                                                            as={NextLink}
-                                                            href={'/shelf'}>
-                                                            Shelf
-                                                        </Link>
-                                                        <Link
-                                                            as={NextLink}
-                                                            href={'/tv-console'}>
-                                                            TV Console
-                                                        </Link>
-                                                        <Link
-                                                            as={NextLink}
-                                                            href={'/table-and-chair'}>
-                                                            Table and chair
-                                                        </Link>
-                                                        <Link
-                                                            as={NextLink}
-                                                            href={'/doors'}>
-                                                            Doors
-                                                        </Link>
+                                                        {CATEGORIES.map(c => (
+                                                            <Link
+                                                                key={c.slug}
+                                                                as={NextLink}
+                                                                href={`/${c.slug}`}>
+                                                                {c.title}
+                                                            </Link>
+                                                        ))}
                                                     </VStack>
                                                 </AccordionPanel>
                                             </AccordionItem>

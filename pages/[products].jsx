@@ -43,6 +43,7 @@ import noProduct from '../public/no_product.png'
 import ProductItem from '../components/product/ProductItem'
 import { getProducts, getProductsByColor, getProductsByPrice } from '../store/productsReducer'
 import Image from 'next/image'
+import { categoryTitle } from '../utils/categories'
 import Meta from '../components/meta/Meta';
 
 const LoadingSkeleton = () => {
@@ -262,7 +263,7 @@ const Products = ({ getProducts, getProductsByColor, getProductsByPrice }) => {
             alignItems={'center'}>
 
             <ToastContainer />
-            <Meta title={`${path.replaceAll('-', ' ')} | Fobath Woodwork`} />
+            <Meta title={`${categoryTitle(path)} | Fobath Woodwork`} />
 
             <Flex
                 alignItems={'center'}
@@ -286,7 +287,7 @@ const Products = ({ getProducts, getProductsByColor, getProductsByPrice }) => {
                     </BreadcrumbItem>
 
                     <BreadcrumbItem textColor={'gray.900'} textTransform={'capitalize'} isCurrentPage>
-                        <Text>{path.replaceAll('-', ' ')}</Text>
+                        <Text>{categoryTitle(path)}</Text>
                     </BreadcrumbItem>
                 </Breadcrumb>
 
