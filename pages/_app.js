@@ -15,7 +15,7 @@ import 'firebase/compat/firestore'
 import { createFirestoreInstance } from 'redux-firestore'
 
 import { theme } from '../styles/theme'
-import { firebaseConfig } from '../firebase'
+import { vercelConfig } from '../vercelConfig'
 import { persistor, store } from '../store/store'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
@@ -24,7 +24,7 @@ import { Router } from 'next/router'
 import Head from 'next/head'
 import NProgress from 'nprogress'
 
-firebase.initializeApp(firebaseConfig)
+firebase.initializeApp(vercelConfig)
 firebase.firestore()
 
 const rrfConfig = {
