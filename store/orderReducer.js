@@ -1,7 +1,7 @@
-import { createSlice, isPending } from "@reduxjs/toolkit"
-import { collection, doc, getDocs, onSnapshot, updateDoc } from "firebase/firestore"
-import firebase from 'firebase/compat/app'
+import { createSlice } from "@reduxjs/toolkit"
 import { toast } from "react-toastify"
+import { api } from "../utils/api"
+import { setCart } from "./sessionReducer"
 
 const dataState = {
     isLoading: true,
@@ -22,8 +22,11 @@ const orderSlice = createSlice({
             return action.payload
         },
         updateStatus(state, action) {
-            toast.info(action.payload)
-            return
+            const { orderId, status } = action.payload
+            if (Array.isArray(state.data)) {
+                const order = state.data.find(o => o.orderId === orderId)
+                if (order) order.status = status
+            }
         }
     }
 })
@@ -32,24 +35,13 @@ export const { fetchOrders, createOrder, updateStatus } = orderSlice.actions
 
 export default orderSlice.reducer
 
-export const retrieveOrders = () => {
-    return async (dispatch, getState, { getFirebase }) => {
+const loadOrders = (path) => {
+    return async (dispatch) => {
         dispatch(fetchOrders({
             ...dataState, isFetching: true
         }))
-        const firestore = getFirebase().firestore()
-        const userId = getState().persistFirebase.auth.uid
-
         try {
-            const orderQuerySnapshot = await getDocs(collection(
-                firestore, 'users', userId, 'orders'
-            ))
-            const orders = []
-            orderQuerySnapshot.forEach((doc) =>
-                orders.push({
-                    pid: doc.id, ...doc.data()
-                })
-            )
+            const { orders } = await api(path)
             dispatch(fetchOrders({
                 ...dataState,
                 isLoading: false,
@@ -62,127 +54,57 @@ export const retrieveOrders = () => {
                 ...dataState,
                 isLoading: false,
                 isFetching: false,
-                error: e,
+                isLoaded: true,
+                error: e.message,
                 data: null
             }))
         }
     }
 }
 
-export const addOrder = (userInfo, totalPrice, items) => {
+export const retrieveOrders = () => loadOrders('/api/orders')
 
-    return async (dispatch, getState, { getFirebase }) => {
+export const retrieveAllOrders = () => loadOrders('/api/admin/orders')
+
+// Places an order from the signed-in user's cart. Resolves to the order, or null on failure.
+export const addOrder = (userInfo) => {
+    return async (dispatch) => {
         dispatch(createOrder({
             ...dataState, isFetching: true
         }))
-
-        const firestore = getFirebase().firestore()
-        const userId = getState().persistFirebase.auth.uid
-
-        firestore.collection(`users/${userId}/orders`).add({
-            status: 'Pending',
-            date: firebase.firestore.Timestamp.fromDate(new Date()),
-            totalPrice: totalPrice,
-            phone: userInfo.phone,
-            email: userInfo.email,
-            fullname: userInfo.fullname,
-            state: userInfo.state,
-            city: userInfo.city,
-            items: items
-        }).then((orderRef) => {
-            dispatch(createOrder({
-                ...dataState,
-                isLoading: false,
-                isFetching: false,
-                isLoaded: true,
-                data: orderRef
-            }))
-        }).catch((e) => {
-            dispatch(createOrder({
-                ...dataState,
-                isLoading: false,
-                isFetching: false,
-                error: e,
-                data: null
-            }))
-        })
-    }
-}
-
-export const retrieveAllOrders = () => {
-    return async (dispatch, getState, { getFirebase }) => {
-        dispatch(fetchOrders({
-            ...dataState, isFetching: true
-        }))
-
-        const userId = []
-        const firestore = getFirebase().firestore()
-
         try {
-            const querySnapshot = await getDocs(collection(firestore, 'users'))
-            querySnapshot.forEach((doc) => {
-                userId.push(doc.id)
-            })
-
-            userId.forEach((id) => {
-                onSnapshot(collection(firestore, 'users', `${id}`, 'orders'),
-                    (querySnapshot) => {
-                        let result = []
-                        querySnapshot.docChanges().forEach((change) => {
-                            result.push({ orderId: change.doc.id, ...change.doc.data() })
-                        })
-
-                        dispatch(fetchOrders({
-                            ...dataState,
-                            isLoading: false,
-                            isFetching: false,
-                            isLoaded: true,
-                            data: result
-                        }))
-                    },
-                    onerror => {
-                        dispatch(fetchOrders({
-                            ...dataState,
-                            isLoading: false,
-                            isFetching: false,
-                            isLoaded: true,
-                            data: null,
-                            error: onerror.message
-                        }))
-                    })
-            })
-        } catch (e) {
-            dispatch(fetchOrders({
+            const { order, cart } = await api('/api/orders', { method: 'POST', body: userInfo })
+            dispatch(setCart(cart))
+            dispatch(createOrder({
                 ...dataState,
                 isLoading: false,
                 isFetching: false,
                 isLoaded: true,
-                data: null,
-                error: e
+                data: order
             }))
+            return order
+        } catch (e) {
+            toast.error(e.message)
+            dispatch(createOrder({
+                ...dataState,
+                isLoading: false,
+                isFetching: false,
+                error: e.message,
+                data: {}
+            }))
+            return null
         }
     }
 }
 
-export const updateOrderStatus = (uid, oid, status) => {
-    // uid - user id
-    // oid - order id
-    return async (dispatch, getState, { getFirebase }) => {
-        dispatch(updateStatus({
-            ...dataState, isFetching: true
-        }))
-
-        const firestore = getFirebase().firestore()
+export const updateOrderStatus = (uid, orderId, status) => {
+    return async (dispatch) => {
         try {
-            const orderRef = doc(firestore, 'users', uid, 'orders', oid)
-
-            await updateDoc(orderRef, {
-                status: status
-            })
-
-            dispatch(updateStatus('Order status has been updated'))
+            await api('/api/admin/orders', { method: 'PATCH', body: { orderId, status } })
+            dispatch(updateStatus({ orderId, status }))
+            toast.info('Order status has been updated')
         } catch (e) {
-            dispatch(updateStatus('Order status failed to update'))
+            toast.error('Order status failed to update')
         }
     }
 }

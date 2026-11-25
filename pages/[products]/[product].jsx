@@ -209,19 +209,21 @@ const ProductDetail =
     ({ getProduct, addToCart, increaseItemQuantity, decreaseItemQuantity, addToWishlist }) => {
         const router = useRouter()
         const path = router.asPath.split('/')
-        const pid = localStorage.getItem('PRODUCT_REF', '')
+        // The product id is in the URL; fall back to the last clicked product for older links.
+        const pid = router.query.product ||
+            (typeof window !== 'undefined' ? localStorage.getItem('PRODUCT_REF') : null)
 
         const { isLoading, isFetching, isLoaded, error, data }
             = useSelector((state) => state.product)
         const [currentImage, setCurrentImage] = useState('')
 
-        const hasNotAuth = useSelector((state) => state.persistFirebase.profile.isEmpty)
+        const hasNotAuth = useSelector((state) => state.session.profile.isEmpty)
 
-        const cart = useSelector((state) => state.persistFirebase.profile.cart)
+        const cart = useSelector((state) => state.session.profile.cart)
 
-        const wishlist = useSelector((state) => state.persistFirebase.profile.wishlist)
+        const wishlist = useSelector((state) => state.session.profile.wishlist)
 
-        const cartItems = useSelector((state) => state?.persistFirebase?.profile?.cart?.items)
+        const cartItems = useSelector((state) => state?.session?.profile?.cart?.items)
 
         const { isOpen, onOpen, onClose } = useDisclosure()
 
@@ -229,8 +231,8 @@ const ProductDetail =
         const isInCart = cartItems && cartItems[pid] ? true : false
 
         useEffect(() => {
-            getProduct(pid)
-        }, [])
+            if (pid) getProduct(pid)
+        }, [pid])
 
         // if (isLoading) return <Text>Fetching...</Text>
 

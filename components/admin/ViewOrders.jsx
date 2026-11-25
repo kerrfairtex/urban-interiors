@@ -37,12 +37,12 @@ const ViewOrders = ({ getAllOrders, updateOrder }) => {
 
                     <Tbody>
                         {
-                            isLoaded && data.map((item) => (
+                            isLoaded && Array.isArray(data) && data.map((item) => (
                                 <Tr key={item.orderId}>
                                     <Td>{item.fullname}</Td>
                                     <Td>{item.email}</Td>
                                     <Td>{item.phone}</Td>
-                                    <Td>{item.date.toDate().toDateString().replace(' ', ', ')}</Td>
+                                    <Td>{new Date(item.date).toDateString().replace(' ', ', ')}</Td>
                                     <Td>{`₦${new Intl.NumberFormat().format(item.totalPrice)}`}</Td>
                                     <Td color={'gold.500'}>{item.status}</Td>
                                     <Td>

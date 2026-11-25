@@ -9,8 +9,8 @@ const ProductItem = ({ productId, productTitle, productImg, productPrice, addToW
     const router = useRouter()
     const catPath = router.query.products
 
-    const wishlist = useSelector((state) => state.persistFirebase.profile.wishlist)
-    const hasNotAuth = useSelector((state) => state.persistFirebase.profile.isEmpty)
+    const wishlist = useSelector((state) => state.session.profile.wishlist)
+    const hasNotAuth = useSelector((state) => state.session.profile.isEmpty)
 
     return (
         <Flex

@@ -1,11 +1,9 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import { firebaseReducer, getFirebase } from 'react-redux-firebase'
-import { firestoreReducer } from 'redux-firestore'
-import thunk from 'redux-thunk'
 import storage from 'redux-persist/lib/storage'
 import persistReducer from 'redux-persist/lib/persistReducer';
 import persistStore from 'redux-persist/lib/persistStore';
 
+import sessionReducer, { refreshSession } from './sessionReducer';
 import productsReducer from './productsReducer';
 import productReducer from './productReducer';
 import cartReducer from './cartReducer';
@@ -13,39 +11,41 @@ import wishlistReducer from './wishlistReducer';
 import orderReducer from './orderReducer';
 import addProductReducer from './addProductReducer';
 import searchReducer from './searchReducer';
-import logoutReducer from './logoutReducer';
 
-const persistFirebaseAuthConfig = {
-    key: 'user',
-    storage,
-    whitelist: ['auth', 'profile']
+const persistSessionConfig = {
+    key: 'session',
+    storage
 }
 
-const persistFirebaseReducer = persistReducer(persistFirebaseAuthConfig, firebaseReducer)
-
 const combinedReducers = combineReducers({
-    persistFirebase: persistFirebaseReducer,
-    firestore: firestoreReducer,
+    session: persistReducer(persistSessionConfig, sessionReducer),
     products: productsReducer,
     product: productReducer,
     cart: cartReducer,
     order: orderReducer,
     addProduct: addProductReducer,
     wishlist: wishlistReducer,
-    search: searchReducer,
-    logout: logoutReducer
+    search: searchReducer
 })
 
 const rootReducer = (state, action) => {
     if (action.type === 'app/logout') {
         state = undefined
+        storage.removeItem('persist:session')
     }
     return combinedReducers(state, action)
 }
 
 export const store = configureStore({
     reducer: rootReducer,
-    middleware: [thunk.withExtraArgument({ getFirebase })]
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware({
+        serializableCheck: false,
+        immutableCheck: false
+    })
 })
 
-export const persistor = persistStore(store)
+// After the saved session is restored, re-check it against the server cookie
+// so the cart, wishlist and admin flag are current.
+export const persistor = persistStore(store, null, () => {
+    if (typeof window !== 'undefined') store.dispatch(refreshSession())
+})

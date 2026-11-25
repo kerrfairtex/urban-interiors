@@ -3,8 +3,8 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { Eye, EyeClosed } from 'phosphor-react'
 import { useState } from 'react'
-import { FcGoogle } from 'react-icons/fc'
-import { useFirebase } from 'react-redux-firebase'
+import { useDispatch } from 'react-redux'
+import { login } from '../store/sessionReducer'
 
 import { motion } from 'framer-motion'
 
@@ -42,7 +42,7 @@ const Login = () => {
     })
     const [errors, setErrors] = useState({})
     const router = useRouter()
-    const firebase = useFirebase()
+    const dispatch = useDispatch()
 
     const handleShowClick = () => setShow(prev => !prev)
     const handleFormChange = (e) => {
@@ -55,24 +55,11 @@ const Login = () => {
         setErrors({})
         setLoading(true)
 
-        firebase.login({ email, password }).then((result) => {
+        dispatch(login(email, password)).then(() => {
             setLoading(false)
             router.push('/')
         }).catch(err => {
-            setAuthErr(err.message)
-        })
-    }
-
-    const signInWithGoogle = () => {
-        setAuthErr('')
-        setErrors({})
-
-        firebase.login({
-            provider: 'google',
-            type: 'popup'
-        }).then((result) => {
-            router.push('/')
-        }).catch(err => {
+            setLoading(false)
             setAuthErr(err.message)
         })
     }
@@ -241,31 +228,6 @@ const Login = () => {
                             }
                         }}>
                         Sign in
-                    </Button>
-
-                    <Text
-                        fontWeight={'normal'}
-                        fontSize={'sm'}
-                        marginY={4}
-                        textColor={'black'}
-                        textTransform={'lowercase'}>
-                        or sign in with
-                    </Text>
-
-                    <Button
-                        bgColor={'blackAlpha.200'}
-                        borderWidth={'0'}
-                        shadow={'sm'}
-                        color={'black'}
-                        width={'full'}
-                        paddingY={5}
-                        leftIcon={<FcGoogle weight={'duotone'} size={20} />}
-                        _hover={{ color: 'black' }}
-                        _focus={{
-                            boxShadow: '0 0 1px 4px hsla(221, 83%, 53%, 0.3)'
-                        }}
-                        onClick={signInWithGoogle}>
-                        Google
                     </Button>
 
                     <Text

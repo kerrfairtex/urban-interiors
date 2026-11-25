@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit"
-
-import { doc, getDoc, getDocs, collection, query, where } from "firebase/firestore";
+import { api } from "../utils/api"
 
 const dataState = {
     isLoading: true,
@@ -25,54 +24,25 @@ export const { search } = searchSlice.actions
 export default searchSlice.reducer
 
 export const searchProducts = (searchTerm) => {
-    return async (dispatch, getState, { getFirebase }) => {
+    return async (dispatch) => {
         dispatch(search({
             ...dataState, isFetching: true
         }))
-
-        const firestore = getFirebase().firestore()
         try {
-            const tokenizeSearchTerm = searchTerm.split(' ')
-            const docIDs = new Set()
-            await Promise.all(tokenizeSearchTerm.map(async (token) => {
-                const searchResultSnapshot = await getDocs(query(collection(firestore, 'index'),
-                    where('term', '==', token)))
-
-                if (!searchResultSnapshot.empty) {
-                    searchResultSnapshot.forEach(searchResultID => {
-                        const arrayID = searchResultID.get('docIDs')
-                        arrayID.forEach(id => docIDs.add(id))
-                    })
-                }
-            }))
-
-            const searchResultID = Array.from(docIDs)
-            const searchResultName = []
-            await Promise.all(searchResultID.map(async (id) => {
-                const productRef = doc(firestore, 'products', id)
-                const docSnap = await getDoc(productRef)
-                if (docSnap.exists()) {
-                    searchResultName.push({
-                        pid: docSnap.id,
-                        ...docSnap.data()
-                    })
-                }
-
-            }))
-
+            const { products } = await api(`/api/search?q=${encodeURIComponent(searchTerm)}`)
             dispatch(search({
                 ...dataState,
                 isLoading: false,
                 isFetching: false,
                 isLoaded: true,
-                data: searchResultName
+                data: products
             }))
         } catch (e) {
             dispatch(search({
                 ...dataState,
                 isLoading: false,
                 isFetching: false,
-                error: e,
+                error: e.message,
                 data: null
             }))
         }

@@ -171,7 +171,7 @@ const OrderLayout = ({ order }) => {
                 />
                 <InfoText
                     subtitle={'Date'}
-                    info={`${order.date.toDate().toDateString().replace(' ', ', ')}`}
+                    info={`${new Date(order.date).toDateString().replace(' ', ', ')}`}
                     color={'black'}
                 />
                 <InfoText
@@ -252,7 +252,7 @@ const Orders = ({ getOrders }) => {
     const router = useRouter()
     const { isLoading, isFetching, isLoaded, error, data }
         = useSelector((state) => state.order)
-    const hasNotAuth = useSelector((state) => state.persistFirebase.auth.isEmpty)
+    const hasNotAuth = useSelector((state) => state.session.auth.isEmpty)
 
     useEffect(() => {
         if (hasNotAuth) {
@@ -330,7 +330,7 @@ const Orders = ({ getOrders }) => {
                     <Box
                         width={'full'}>
                         {
-                            isLoading ? <LoadingSkeleton /> :
+                            isLoading || !Array.isArray(data) ? <LoadingSkeleton /> :
 
                                 data.map((order) =>
                                     <OrderLayout

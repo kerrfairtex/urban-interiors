@@ -2,7 +2,6 @@ import { Button, Flex, Input, Menu, MenuButton, MenuItemOption, MenuList, MenuOp
 import { CaretDoubleDown, Circle } from "phosphor-react"
 import { useState } from "react"
 import { connect } from "react-redux"
-import firebase from 'firebase/compat/app'
 
 import { addNewProduct } from "../../store/addProductReducer"
 
@@ -83,7 +82,6 @@ const UploadProduct = ({ uploadNewProduct }) => {
                 height: Number(product.height),
                 color: selectedColorName,
                 colorValue: selectedColorValue,
-                createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
             }
 
             changeLoadState()

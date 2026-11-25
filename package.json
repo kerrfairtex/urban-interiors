@@ -5,7 +5,7 @@
     "scripts": {
         "dev": "next dev",
         "build": "next build",
-        "start": "next start -H 0.0.0.0 -p ${PORT:-8080}",
+        "start": "next start",
         "lint": "next lint"
     },
     "dependencies": {
@@ -14,8 +14,9 @@
         "@emotion/styled": "^11.10.5",
         "@fontsource/epilogue": "^4.5.10",
         "@fontsource/plus-jakarta-sans": "^4.5.10",
+        "@neondatabase/serverless": "^1.2.1",
         "@reduxjs/toolkit": "^1.9.0",
-        "firebase": "^9.14.0",
+        "@vercel/blob": "^2.9.0",
         "framer-motion": "^6.5.1",
         "next": "13.0.2",
         "nprogress": "^0.2.0",
@@ -24,14 +25,10 @@
         "react-confetti": "^6.1.0",
         "react-dom": "18.2.0",
         "react-icons": "^4.6.0",
-        "react-paystack": "^4.0.1",
         "react-redux": "^8.0.5",
-        "react-redux-firebase": "^3.11.0",
         "react-toastify": "^9.1.1",
         "redux": "^4.2.0",
-        "redux-firestore": "^1.0.0",
-        "redux-persist": "^6.0.0",
-        "wink-lemmatizer": "^3.0.2"
+        "redux-persist": "^6.0.0"
     },
     "devDependencies": {
         "autoprefixer": "^10.4.13",
@@ -39,5 +36,8 @@
         "eslint-config-next": "13.0.2",
         "postcss": "^8.4.20",
         "tailwindcss": "^3.2.4"
+    },
+    "engines": {
+        "node": "22.x"
     }
 }

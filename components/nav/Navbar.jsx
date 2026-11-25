@@ -11,8 +11,8 @@ import { searchProducts } from '../../store/searchReducer'
 
 const Navbar = ({ search }) => {
     const router = useRouter()
-    const auth = useSelector(state => state.persistFirebase.profile)
-    const cart = useSelector((state) => state.persistFirebase.profile.cart)
+    const auth = useSelector(state => state.session.profile)
+    const cart = useSelector((state) => state.session.profile.cart)
     const dispatch = useDispatch()
     const { isOpen, onOpen, onClose } = useDisclosure()
     const menuRef = useRef()
@@ -42,7 +42,7 @@ const Navbar = ({ search }) => {
                     transition={'all .4s'}
                     onClick={() => router.replace('/')}
                     _hover={{ cursor: 'pointer', color: 'gold.500' }}>
-                    urban interiors
+                    cebu urban interiors
                 </Text>
 
                 <InputGroup
@@ -186,25 +186,27 @@ const Navbar = ({ search }) => {
                             </HStack>
                             :
                             <>
-                                <IconButton
-                                    aria-label={'shopping cart'}
-                                    bg={'gold.100'}
-                                    color={'black'}
-                                    variant={'ghost'}
-                                    icon={
-                                        <Tooltip
-                                            hasArrow
-                                            label={'Admin'}
-                                            placement={'bottom'}
-                                            textColor={'white'}
-                                            bgColor={'gray.900'}>
-                                            <AngularLogo size={24} weight={'regular'} />
-                                        </Tooltip>
-                                    }
-                                    _hover={{
-                                        color: 'gold.500'
-                                    }}
-                                    onClick={() => router.push('/admin')} />
+                                {auth.isAdmin &&
+                                    <IconButton
+                                        aria-label={'admin'}
+                                        bg={'gold.100'}
+                                        color={'black'}
+                                        variant={'ghost'}
+                                        icon={
+                                            <Tooltip
+                                                hasArrow
+                                                label={'Admin'}
+                                                placement={'bottom'}
+                                                textColor={'white'}
+                                                bgColor={'gray.900'}>
+                                                <AngularLogo size={24} weight={'regular'} />
+                                            </Tooltip>
+                                        }
+                                        _hover={{
+                                            color: 'gold.500'
+                                        }}
+                                        onClick={() => router.push('/admin')} />
+                                }
 
                                 <IconButton
                                     aria-label={'account'}
@@ -278,7 +280,7 @@ const Navbar = ({ search }) => {
                     <DrawerOverlay />
                     <DrawerContent>
                         <DrawerCloseButton />
-                        <DrawerHeader>Urban Interiors</DrawerHeader>
+                        <DrawerHeader>Cebu Urban Interiors</DrawerHeader>
 
                         <DrawerBody>
                             {
