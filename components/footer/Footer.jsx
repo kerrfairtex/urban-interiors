@@ -2,8 +2,6 @@ import { Divider, Flex, Grid, HStack, Icon, IconButton, Stack, Text, VStack } fr
 import Link from 'next/link'
 import { At, InstagramLogo, MapPinLine, Phone, TwitterLogo } from 'phosphor-react';
 
-const MAP_LINK = 'https://maps.app.goo.gl/Zt71whZAomiLi1CRA?g_st=ac'
-const MAP_EMBED = 'https://maps.google.com/maps?q=10.020346,123.420904&z=16&output=embed'
 const PHONE = '09637130812'
 import { useSelector } from 'react-redux';
 
@@ -195,16 +193,12 @@ const Footer = () => {
                             weight={'duotone'}
                         />
                         <Text
-                            as={'a'}
-                            href={MAP_LINK}
-                            target={'_blank'}
-                            rel={'noopener noreferrer'}
+                            as={'address'}
+                            fontStyle={'normal'}
                             color={'white'}
                             fontWeight={'normal'}
-                            fontSize={'sm'}
-                            textDecoration={'underline'}
-                            _hover={{ color: 'gold.500' }}>
-                            Cebu, Philippines (open in Google Maps)
+                            fontSize={'sm'}>
+                            Brgy. Santa Cruz, located in the municipality of Ronda Cebu
                         </Text>
                     </HStack>
                     <HStack>
@@ -238,19 +232,6 @@ const Footer = () => {
                             urbaninteriors@mail.com
                         </Text>
                     </HStack>
-
-                    <Flex
-                        as={'iframe'}
-                        title={'Cebu Urban Interiors location map'}
-                        src={MAP_EMBED}
-                        loading={'lazy'}
-                        referrerPolicy={'no-referrer-when-downgrade'}
-                        width={{ base: '280px', md: '320px' }}
-                        height={'200px'}
-                        border={0}
-                        rounded={'md'}
-                        mt={2}
-                    />
 
                     <Stack
                         direction={'row'}
