@@ -13,6 +13,7 @@
         "@emotion/react": "^11.10.5",
         "@emotion/styled": "^11.10.5",
         "@fontsource/epilogue": "^4.5.10",
+        "@fontsource/great-vibes": "^5.3.0",
         "@fontsource/plus-jakarta-sans": "^4.5.10",
         "@neondatabase/serverless": "^1.2.1",
         "@reduxjs/toolkit": "^1.9.0",

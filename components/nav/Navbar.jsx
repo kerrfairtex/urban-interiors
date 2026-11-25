@@ -33,17 +33,35 @@ const Navbar = ({ search }) => {
                 justifyContent={'space-between'}
                 alignItems={'center'}>
 
-                <Text
-                    fontWeight={'semibold'}
-                    fontSize={{ base: 'sm', md: 'md' }}
-                    letterSpacing={'widest'}
-                    textColor={'black'}
-                    textTransform={'uppercase'}
-                    transition={'all .4s'}
-                    onClick={() => router.replace('/')}
-                    _hover={{ cursor: 'pointer', color: 'gold.500' }}>
-                    cebu urban interiors
-                </Text>
+                <HStack
+                    spacing={{ base: 2, md: 3 }}
+                    alignItems={'center'}
+                    flexShrink={0}
+                    role={'group'}
+                    cursor={'pointer'}
+                    onClick={() => router.replace('/')}>
+                    <Text
+                        fontWeight={'semibold'}
+                        fontSize={{ base: 'sm', md: 'md' }}
+                        letterSpacing={'widest'}
+                        textColor={'black'}
+                        textTransform={'uppercase'}
+                        transition={'all .4s'}
+                        _groupHover={{ color: 'gold.500' }}>
+                        cebu urban interiors
+                    </Text>
+                    {/* Readable signature-style script */}
+                    <Text
+                        as={'span'}
+                        fontFamily={"'Great Vibes', cursive"}
+                        fontWeight={'normal'}
+                        fontSize={{ base: 'xl', md: '3xl' }}
+                        lineHeight={1}
+                        textColor={'black'}
+                        whiteSpace={'nowrap'}>
+                        Elton Furniture
+                    </Text>
+                </HStack>
 
                 <InputGroup
                     size={'lg'}
@@ -386,6 +404,11 @@ const Navbar = ({ search }) => {
                                                             as={NextLink}
                                                             href={'/table-and-chair'}>
                                                             Table and chair
+                                                        </Link>
+                                                        <Link
+                                                            as={NextLink}
+                                                            href={'/doors'}>
+                                                            Doors
                                                         </Link>
                                                     </VStack>
                                                 </AccordionPanel>

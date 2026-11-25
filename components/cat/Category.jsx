@@ -7,6 +7,7 @@ import shoeRack from '../../public/shoe_rack.png'
 import wardrobe from '../../public/wardrobe.png'
 import bed from '../../public/bed.png'
 import chair from '../../public/chair.png'
+import door from '../../public/door.png'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
@@ -110,8 +111,10 @@ const Category = () => {
                 display={{ base: 'none', lg: 'flex' }}
                 direction={'row'}
                 marginTop={8}
-                spacing={5}
-                justifyContent={'space-between'}>
+                spacing={0}
+                gap={5}
+                flexWrap={'wrap'}
+                justifyContent={'center'}>
                 <CategoryItem catImg={couch} catTitle={'Sofa'} />
                 <CategoryItem catImg={bed} catTitle={'Bed'} />
                 <CategoryItem catImg={shoeRack} catTitle={'Shoe rack'} />
@@ -119,6 +122,7 @@ const Category = () => {
                 <CategoryItem catImg={shelf} catTitle={'Shelf'} />
                 <CategoryItem catImg={console} catTitle={'TV console'} />
                 <CategoryItem catImg={chair} catTitle={'Table and chair'} />
+                <CategoryItem catImg={door} catTitle={'Doors'} />
             </Stack>
 
             <Grid
@@ -136,6 +140,7 @@ const Category = () => {
                 <CategoryItem catImg={shelf} catTitle={'Shelf'} />
                 <CategoryItem catImg={console} catTitle={'TV console'} />
                 <CategoryItem catImg={chair} catTitle={'Table and chair'} />
+                <CategoryItem catImg={door} catTitle={'Doors'} />
             </Grid>
 
 

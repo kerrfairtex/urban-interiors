@@ -202,6 +202,7 @@ const UploadProduct = ({ uploadNewProduct }) => {
                                     <MenuItemOption value={'shelf'}>Shelf</MenuItemOption>
                                     <MenuItemOption value={'tv-console'}>TV Console</MenuItemOption>
                                     <MenuItemOption value={'table-and-chair'}>Table and chair</MenuItemOption>
+                                    <MenuItemOption value={'doors'}>Doors</MenuItemOption>
                                 </MenuOptionGroup>
                             </MenuList>
                         </Menu>
