@@ -60,7 +60,7 @@ const Navbar = ({ search }) => {
                         lineHeight={1}
                         textColor={'black'}
                         whiteSpace={'nowrap'}>
-                        Elton Furniture
+                        Ka Elton Furniture
                     </Text>
                 </HStack>
 
