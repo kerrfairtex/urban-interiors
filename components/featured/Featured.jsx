@@ -267,6 +267,15 @@ const Featured = ({ getProductsBySubCategory }) => {
                 Discover varieties of selected amazing products collection
             </Text>
 
+            <Button
+                mt={5}
+                variant={'outline'}
+                borderColor={'gray.300'}
+                onClick={() => router.push('/products')}
+                _hover={{ borderColor: 'gold.500', color: 'gold.700' }}>
+                Shop all products
+            </Button>
+
             <Tabs
                 align={'center'}
                 marginTop={4}

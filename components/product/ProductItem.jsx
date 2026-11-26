@@ -5,9 +5,9 @@ import { Heart, Trash } from 'phosphor-react'
 import { connect, useSelector } from 'react-redux'
 import { addToWishlist, deleteFromWishlist } from '../../store/wishlistReducer'
 
-const ProductItem = ({ productId, productTitle, productImg, productPrice, addToWishlist, deleteFromWishlist }) => {
+const ProductItem = ({ productId, productTitle, productImg, productPrice, productCategory, addToWishlist, deleteFromWishlist }) => {
     const router = useRouter()
-    const catPath = router.query.products
+    const catPath = productCategory || router.query.products
 
     const wishlist = useSelector((state) => state.session.profile.wishlist)
     const hasNotAuth = useSelector((state) => state.session.profile.isEmpty)
