@@ -77,7 +77,7 @@ const OrderItem = ({ order }) => {
                             fontSize={'sm'}
                             textAlign={'start'}
                             textColor={'black'}>
-                            {`₦${new Intl.NumberFormat().format(order.price)}`}
+                            {`₱${new Intl.NumberFormat().format(order.price)}`}
                         </Text>
                     </VStack>
                 </Flex>
@@ -176,7 +176,7 @@ const OrderLayout = ({ order }) => {
                 />
                 <InfoText
                     subtitle={'Total Amount'}
-                    info={`₦${new Intl.NumberFormat().format(order.totalPrice)}`}
+                    info={`₱${new Intl.NumberFormat().format(order.totalPrice)}`}
                     color={'black'}
                 />
                 <InfoText

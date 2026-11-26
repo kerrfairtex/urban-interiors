@@ -62,7 +62,7 @@ const WishlistItem = ({ item, onDelete }) => {
                         fontSize={'md'}
                         textAlign={'start'}
                         textColor={'black'}>
-                        {`₦${new Intl.NumberFormat().format(item.productPrice)}`}
+                        {`₱${new Intl.NumberFormat().format(item.productPrice)}`}
                     </Text>
 
                 </VStack>

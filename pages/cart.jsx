@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchProductsByIds } from '../utils/api'
+import { SHIPPING_FEE } from '../utils/constants'
 import { Minus, Plus, Trash } from 'phosphor-react'
 import { increaseQuantity, decreaseQuantity, deleteFromCart } from '../store/cartReducer'
 import { ToastContainer } from 'react-toastify'
@@ -65,7 +66,7 @@ const CartItem = ({ item, cart, onDelete }) => {
                         fontSize={'md'}
                         textAlign={'start'}
                         textColor={'black'}>
-                        {`₦${new Intl.NumberFormat().format(item.productPrice)}`}
+                        {`₱${new Intl.NumberFormat().format(item.productPrice)}`}
                     </Text>
 
                 </VStack>
@@ -338,7 +339,7 @@ const Cart = () => {
                                 <Text
                                     fontWeight={'normal'}
                                     textColor={'black'}>
-                                    {`₦${new Intl.NumberFormat().format(cart?.totalPrice)}`}
+                                    {`₱${new Intl.NumberFormat().format(cart?.totalPrice)}`}
                                 </Text>
                             </Flex>
                             <Divider orientation={'horizontal'} bgColor={'gray.200'} height={'1px'} />
@@ -356,7 +357,7 @@ const Cart = () => {
                                 <Text
                                     fontWeight={'normal'}
                                     textColor={'black'}>
-                                    ₦9,000
+                                    {`₱${new Intl.NumberFormat().format(SHIPPING_FEE)}`}
                                 </Text>
                             </Flex>
                             <Divider orientation={'horizontal'} bgColor={'gray.200'} height={'1px'} />
@@ -374,7 +375,7 @@ const Cart = () => {
                                 <Text
                                     fontWeight={'medium'}
                                     textColor={'black'}>
-                                    ₦99,000
+                                    {`₱${new Intl.NumberFormat().format((cart?.totalPrice || 0) + SHIPPING_FEE)}`}
                                 </Text>
                             </Flex>
 

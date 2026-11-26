@@ -132,7 +132,7 @@ const FilterAccordionItem = ({ accordionTitle, cat, filterByColor, items, lastVi
 
 const FilterDrawer = ({ isOpen, onClose, btnRef, cat, lastVisible, fetchProducts, filterByColor, filterByPrice }) => {
 
-    const [priceRange, setPriceRange] = useState([100000, 250000])
+    const [priceRange, setPriceRange] = useState([0, 150000])
 
     return (
         <>
@@ -168,15 +168,16 @@ const FilterDrawer = ({ isOpen, onClose, btnRef, cat, lastVisible, fetchProducts
                                 textColor={'black'}
                                 fontWeight={'semibold'}
                                 marginTop={4}>
-                                Price (Naira)
+                                Price (Peso)
                             </Text>
 
                             <RangeSlider aria-label={['min', 'max']}
-                                defaultValue={[100000, 250000]}
+                                defaultValue={[0, 150000]}
                                 marginTop={2}
                                 onChange={(val) => setPriceRange(val)}
-                                min={10000}
-                                max={500000}>
+                                min={0}
+                                max={150000}
+                                step={500}>
                                 <RangeSliderTrack>
                                     <RangeSliderFilledTrack bgColor={'gold.500'} />
                                 </RangeSliderTrack>
@@ -190,14 +191,14 @@ const FilterDrawer = ({ isOpen, onClose, btnRef, cat, lastVisible, fetchProducts
                                     textColor={'gray.900'}
                                     fontSize={'xs'}
                                     fontWeight={'medium'}>
-                                    {`₦${new Intl.NumberFormat().format(priceRange[0])}`}
+                                    {`₱${new Intl.NumberFormat().format(priceRange[0])}`}
                                 </Text>
 
                                 <Text
                                     textColor={'gray.900'}
                                     fontSize={'xs'}
                                     fontWeight={'medium'}>
-                                    {`₦${new Intl.NumberFormat().format(priceRange[1])}`}
+                                    {`₱${new Intl.NumberFormat().format(priceRange[1])}`}
                                 </Text>
                             </Flex>
 

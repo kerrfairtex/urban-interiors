@@ -92,6 +92,7 @@ const FeaturedItem = ({ productId, productName, productPrice,
                 <Image
                     src={productImg}
                     fill
+                    style={{ objectFit: 'cover' }}
                     alt={productName} />
             </Box>
 
@@ -112,7 +113,7 @@ const FeaturedItem = ({ productId, productName, productPrice,
                 textColor={'gray.900'}
                 paddingStart={2}
                 paddingBottom={2}>
-                {`₦${new Intl.NumberFormat().format(productPrice)}`}
+                {`₱${new Intl.NumberFormat().format(productPrice)}`}
             </Text>
 
             <Button

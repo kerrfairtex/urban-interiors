@@ -133,7 +133,7 @@ const ModalDialogItem = ({ productName, productPrice, colorValue, colorName, pid
                     fontWeight={'medium'}
                     fontSize={'sm'}
                     textColor={'gray.900'}>
-                    {`₦${new Intl.NumberFormat().format(productPrice)}`}
+                    {`₱${new Intl.NumberFormat().format(productPrice)}`}
                 </Text>
             </Stack>
 
@@ -383,7 +383,7 @@ const ProductDetail =
                                     fontSize={'xl'}
                                     textColor={'gray.900'}
                                     marginTop={2}>
-                                    {`₦${new Intl.NumberFormat().format(data.productPrice)}`}
+                                    {`₱${new Intl.NumberFormat().format(data.productPrice)}`}
                                 </Text>
 
                                 <Text

@@ -43,7 +43,7 @@ const ViewOrders = ({ getAllOrders, updateOrder }) => {
                                     <Td>{item.email}</Td>
                                     <Td>{item.phone}</Td>
                                     <Td>{new Date(item.date).toDateString().replace(' ', ', ')}</Td>
-                                    <Td>{`₦${new Intl.NumberFormat().format(item.totalPrice)}`}</Td>
+                                    <Td>{`₱${new Intl.NumberFormat().format(item.totalPrice)}`}</Td>
                                     <Td color={'gold.500'}>{item.status}</Td>
                                     <Td>
                                         <Menu>

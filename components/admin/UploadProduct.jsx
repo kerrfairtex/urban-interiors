@@ -152,7 +152,7 @@ const UploadProduct = ({ uploadNewProduct }) => {
                             textColor={'black'}
                             fontWeight={'medium'}
                             fontSize={'sm'}>
-                            Product price (NGN)
+                            Product price (PHP)
                         </Text>
 
                         <Input

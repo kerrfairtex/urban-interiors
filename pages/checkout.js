@@ -55,7 +55,7 @@ const CartItem = ({ item }) => {
                         fontSize={'sm'}
                         textAlign={'start'}
                         textColor={'black'}>
-                        {`₦${new Intl.NumberFormat().format(item.productPrice)}`}
+                        {`₱${new Intl.NumberFormat().format(item.productPrice)}`}
                     </Text>
 
                 </VStack>
@@ -399,7 +399,7 @@ const Checkout = () => {
                             fontWeight={'normal'}
                             textColor={'black'}
                             fontSize={'sm'}>
-                            {`₦${new Intl.NumberFormat().format(cart?.totalPrice)}`}
+                            {`₱${new Intl.NumberFormat().format(cart?.totalPrice)}`}
                         </Text>
                     </Flex>
                     <Divider orientation={'horizontal'} bgColor={'gray.200'} height={'.1px'} />
@@ -418,7 +418,7 @@ const Checkout = () => {
                             fontWeight={'normal'}
                             textColor={'black'}
                             fontSize={'sm'}>
-                            {`₦${new Intl.NumberFormat().format(SHIPPING_FEE)}`}
+                            {`₱${new Intl.NumberFormat().format(SHIPPING_FEE)}`}
                         </Text>
                     </Flex>
                     <Divider orientation={'horizontal'} bgColor={'gray.200'} height={'.1px'} />
@@ -436,7 +436,7 @@ const Checkout = () => {
                         <Text
                             fontWeight={'medium'}
                             textColor={'black'}>
-                            {`₦${new Intl.NumberFormat().format((cart?.totalPrice || 0) + SHIPPING_FEE)}`}
+                            {`₱${new Intl.NumberFormat().format((cart?.totalPrice || 0) + SHIPPING_FEE)}`}
                         </Text>
                     </Flex>
 
