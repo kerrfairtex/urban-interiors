@@ -43,7 +43,9 @@ import noProduct from '../public/no_product.png'
 import ProductItem from '../components/product/ProductItem'
 import { getProducts, getProductsByColor, getProductsByPrice } from '../store/productsReducer'
 import Image from 'next/image'
+import { categoryTitle } from '../utils/categories'
 import Meta from '../components/meta/Meta';
+import { priceLabel } from '../utils/productOptions'
 
 const LoadingSkeleton = () => {
     return (
@@ -131,7 +133,7 @@ const FilterAccordionItem = ({ accordionTitle, cat, filterByColor, items, lastVi
 
 const FilterDrawer = ({ isOpen, onClose, btnRef, cat, lastVisible, fetchProducts, filterByColor, filterByPrice }) => {
 
-    const [priceRange, setPriceRange] = useState([100000, 250000])
+    const [priceRange, setPriceRange] = useState([0, 150000])
 
     return (
         <>
@@ -167,15 +169,16 @@ const FilterDrawer = ({ isOpen, onClose, btnRef, cat, lastVisible, fetchProducts
                                 textColor={'black'}
                                 fontWeight={'semibold'}
                                 marginTop={4}>
-                                Price (Naira)
+                                Price (Peso)
                             </Text>
 
                             <RangeSlider aria-label={['min', 'max']}
-                                defaultValue={[100000, 250000]}
+                                defaultValue={[0, 150000]}
                                 marginTop={2}
                                 onChange={(val) => setPriceRange(val)}
-                                min={10000}
-                                max={500000}>
+                                min={0}
+                                max={150000}
+                                step={500}>
                                 <RangeSliderTrack>
                                     <RangeSliderFilledTrack bgColor={'gold.500'} />
                                 </RangeSliderTrack>
@@ -189,14 +192,14 @@ const FilterDrawer = ({ isOpen, onClose, btnRef, cat, lastVisible, fetchProducts
                                     textColor={'gray.900'}
                                     fontSize={'xs'}
                                     fontWeight={'medium'}>
-                                    {`₦${new Intl.NumberFormat().format(priceRange[0])}`}
+                                    {`₱${new Intl.NumberFormat().format(priceRange[0])}`}
                                 </Text>
 
                                 <Text
                                     textColor={'gray.900'}
                                     fontSize={'xs'}
                                     fontWeight={'medium'}>
-                                    {`₦${new Intl.NumberFormat().format(priceRange[1])}`}
+                                    {`₱${new Intl.NumberFormat().format(priceRange[1])}`}
                                 </Text>
                             </Flex>
 
@@ -262,7 +265,7 @@ const Products = ({ getProducts, getProductsByColor, getProductsByPrice }) => {
             alignItems={'center'}>
 
             <ToastContainer />
-            <Meta title={`${path.replaceAll('-', ' ')} | Fobath Woodwork`} />
+            <Meta title={`${categoryTitle(path)} | Fobath Woodwork`} />
 
             <Flex
                 alignItems={'center'}
@@ -286,7 +289,7 @@ const Products = ({ getProducts, getProductsByColor, getProductsByPrice }) => {
                     </BreadcrumbItem>
 
                     <BreadcrumbItem textColor={'gray.900'} textTransform={'capitalize'} isCurrentPage>
-                        <Text>{path.replaceAll('-', ' ')}</Text>
+                        <Text>{categoryTitle(path)}</Text>
                     </BreadcrumbItem>
                 </Breadcrumb>
 
@@ -369,7 +372,7 @@ const Products = ({ getProducts, getProductsByColor, getProductsByPrice }) => {
                                         productId={product.pid}
                                         productTitle={product.productName}
                                         productImg={product.images[0]}
-                                        productPrice={product.productPrice}
+                                        productPrice={priceLabel(product)}
                                     />))
                             }
                         </Grid>

@@ -8,6 +8,7 @@ import { retrieveOrders } from '../store/orderReducer'
 import emptyOrder from '../public/package.png'
 import { useRouter } from 'next/router'
 import Meta from '../components/meta/Meta'
+import { describeSelection } from '../utils/productOptions'
 
 const InfoText = ({ subtitle, info, color }) => {
     return (
@@ -71,13 +72,17 @@ const OrderItem = ({ order }) => {
                             textOverflow={'ellipsis'}>
                             {order.title}
                         </Text>
+                        {order.options &&
+                            <Text fontSize={'xs'} textColor={'gray.600'} maxWidth={'xs'}>
+                                {describeSelection(order.options)}
+                            </Text>}
 
                         <Text
                             fontWeight={'medium'}
                             fontSize={'sm'}
                             textAlign={'start'}
                             textColor={'black'}>
-                            {`₦${new Intl.NumberFormat().format(order.price)}`}
+                            {`₱${new Intl.NumberFormat().format(order.price)}`}
                         </Text>
                     </VStack>
                 </Flex>
@@ -87,11 +92,11 @@ const OrderItem = ({ order }) => {
                     display={{base: 'none', lg: 'flex'}}>
 
                     <Circle size={'32px'} borderWidth={1} borderColor={'blackAlpha.500'}>
-                        <CircleIcon weight={'fill'} color={order.color.value} size={32} />
+                        <CircleIcon weight={'fill'} color={order.color?.value} size={32} />
                     </Circle>
 
                     <Text textTransform={'capitalize'}>
-                        {order.color.name}
+                        {order.color?.name}
                     </Text>
 
                 </VStack>
@@ -116,11 +121,11 @@ const OrderItem = ({ order }) => {
                     alignItems={'start'}>
 
                     <Circle size={'28px'} borderWidth={1} borderColor={'blackAlpha.500'}>
-                        <CircleIcon weight={'fill'} color={order.color.value} size={24} />
+                        <CircleIcon weight={'fill'} color={order.color?.value} size={24} />
                     </Circle>
 
                     <Text textTransform={'capitalize'} fontSize={'sm'}>
-                        {order.color.name}
+                        {order.color?.name}
                     </Text>
 
                 </VStack>
@@ -171,12 +176,12 @@ const OrderLayout = ({ order }) => {
                 />
                 <InfoText
                     subtitle={'Date'}
-                    info={`${order.date.toDate().toDateString().replace(' ', ', ')}`}
+                    info={`${new Date(order.date).toDateString().replace(' ', ', ')}`}
                     color={'black'}
                 />
                 <InfoText
                     subtitle={'Total Amount'}
-                    info={`₦${new Intl.NumberFormat().format(order.totalPrice)}`}
+                    info={`₱${new Intl.NumberFormat().format(order.totalPrice)}`}
                     color={'black'}
                 />
                 <InfoText
@@ -252,7 +257,7 @@ const Orders = ({ getOrders }) => {
     const router = useRouter()
     const { isLoading, isFetching, isLoaded, error, data }
         = useSelector((state) => state.order)
-    const hasNotAuth = useSelector((state) => state.persistFirebase.auth.isEmpty)
+    const hasNotAuth = useSelector((state) => state.session.auth.isEmpty)
 
     useEffect(() => {
         if (hasNotAuth) {
@@ -330,7 +335,7 @@ const Orders = ({ getOrders }) => {
                     <Box
                         width={'full'}>
                         {
-                            isLoading ? <LoadingSkeleton /> :
+                            isLoading || !Array.isArray(data) ? <LoadingSkeleton /> :
 
                                 data.map((order) =>
                                     <OrderLayout

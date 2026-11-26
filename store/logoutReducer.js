@@ -1,25 +1,13 @@
-import { createSlice } from '@reduxjs/toolkit';
-
-import storage from 'redux-persist/lib/storage'
-
-const logOutSlice = createSlice({
-    name: 'app',
-    initialState: {},
-    reducers: {
-        logOut: (state, action) => {
-            return action.payload
-        }
-    }
-})
-
-export const { logOut } = logOutSlice.actions
-export default logOutSlice.reducer
+import { api } from '../utils/api'
 
 export const signOut = () => {
-    return async (dispatch, getState, { getFirebase }) => {
-        storage.removeItem('persist:user')
+    return async (dispatch) => {
         localStorage.removeItem('PRODUCT_REF')
-        getFirebase().logout()
-        dispatch(logOut({success: true}))
+        try {
+            await api('/api/auth/logout', { method: 'POST' })
+        } finally {
+            // Resets every slice (see rootReducer in store.js).
+            dispatch({ type: 'app/logout' })
+        }
     }
 }

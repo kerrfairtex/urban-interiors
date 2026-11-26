@@ -3,9 +3,8 @@ import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { Eye, EyeClosed } from 'phosphor-react'
 import { useState } from 'react'
-import { FcGoogle } from 'react-icons/fc'
-import { useFirebase } from 'react-redux-firebase'
-import firebaseCompat from 'firebase/compat/app'
+import { useDispatch } from 'react-redux'
+import { signup } from '../store/sessionReducer'
 
 import { motion } from 'framer-motion'
 
@@ -44,17 +43,7 @@ const Login = () => {
     })
     const [errors, setErrors] = useState({})
     const router = useRouter()
-    const firebase = useFirebase()
-
-    const firestore = firebaseCompat.firestore()
-
-    const cart = {
-        totalItems: 0,
-        totalPrice: 0,
-        items: {}
-    }
-
-    const wishlist = []
+    const dispatch = useDispatch()
 
     const handleFormChange = (e) => {
         const { name, value } = e.target
@@ -67,7 +56,7 @@ const Login = () => {
         setAuthErr('')
         setErrors({})
 
-        firebase.createUser({ email, password }, { fullname, email, cart, wishlist })
+        dispatch(signup(fullname, email, password))
             .then(() => {
                 setLoading(false)
                 router.push('/')
@@ -78,23 +67,6 @@ const Login = () => {
             })
     }
 
-    const signUpWithGoogle = () => {
-        setAuthErr('')
-        setErrors({})
-
-        firebase.login({
-            provider: 'google',
-            type: 'popup',
-        }).then((res) => {
-            firestore
-                .collection('users')
-                .doc(res.user.uid)
-                .update({ cart, wishlist })
-            router.push('/')
-        }).catch(err => {
-            setAuthErr(err.message)
-        })
-    }
     return (
         <Flex
             w={'full'}
@@ -302,31 +274,6 @@ const Login = () => {
                             }
                         }}>
                         Sign up
-                    </Button>
-
-                    <Text
-                        fontWeight={'normal'}
-                        fontSize={'sm'}
-                        marginY={4}
-                        textColor={'black'}
-                        textTransform={'lowercase'}>
-                        or sign up with
-                    </Text>
-
-                    <Button
-                        bgColor={'blackAlpha.200'}
-                        borderWidth={'0'}
-                        shadow={'sm'}
-                        color={'black'}
-                        width={'full'}
-                        paddingY={5}
-                        leftIcon={<FcGoogle weight={'duotone'} size={20} />}
-                        _hover={{ color: 'black' }}
-                        _focus={{
-                            boxShadow: '0 0 1px 4px hsla(221, 83%, 53%, 0.3)'
-                        }}
-                        onClick={signUpWithGoogle}>
-                        Google
                     </Button>
 
                     <Text

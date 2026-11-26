@@ -2,11 +2,12 @@ import { Button, Flex, Input, Menu, MenuButton, MenuItemOption, MenuList, MenuOp
 import { CaretDoubleDown, Circle } from "phosphor-react"
 import { useState } from "react"
 import { connect } from "react-redux"
-import firebase from 'firebase/compat/app'
 
 import { addNewProduct } from "../../store/addProductReducer"
+import ProductDetailsForm, { detailsForSave, emptyDetails } from "./ProductDetailsForm"
 
 import { AddProductValidation } from '../../utils/validate'
+import { CATEGORIES } from '../../utils/categories'
 
 const UploadProduct = ({ uploadNewProduct }) => {
 
@@ -23,6 +24,8 @@ const UploadProduct = ({ uploadNewProduct }) => {
         desc: ''
     })
 
+    const [details, setDetails] = useState(emptyDetails)
+    const [viewFiles, setViewFiles] = useState({})
     const [errors, setErrors] = useState({})
     const [isLoading, setIsLoading] = useState(false)
 
@@ -83,7 +86,8 @@ const UploadProduct = ({ uploadNewProduct }) => {
                 height: Number(product.height),
                 color: selectedColorName,
                 colorValue: selectedColorValue,
-                createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
+                details: detailsForSave(details),
+                viewFiles
             }
 
             changeLoadState()
@@ -153,7 +157,7 @@ const UploadProduct = ({ uploadNewProduct }) => {
                             textColor={'black'}
                             fontWeight={'medium'}
                             fontSize={'sm'}>
-                            Product price (NGN)
+                            Product price (PHP)
                         </Text>
 
                         <Input
@@ -197,13 +201,9 @@ const UploadProduct = ({ uploadNewProduct }) => {
                             <MenuList minWidth='240px' fontSize={'sm'}>
                                 <MenuOptionGroup defaultValue={'bed'} title='Choose furniture type' type='radio'
                                     onChange={(e) => setProduct(prevProd => ({ ...prevProd, category: e }))}>
-                                    <MenuItemOption value={'sofa'}>Sofa</MenuItemOption>
-                                    <MenuItemOption value={'bed'}>Bed</MenuItemOption>
-                                    <MenuItemOption value={'shoe-rack'}>Shoe Rack</MenuItemOption>
-                                    <MenuItemOption value={'ward-robe'}>Ward Robe</MenuItemOption>
-                                    <MenuItemOption value={'shelf'}>Shelf</MenuItemOption>
-                                    <MenuItemOption value={'tv-console'}>TV Console</MenuItemOption>
-                                    <MenuItemOption value={'table-and-chair'}>Table and chair</MenuItemOption>
+                                    {CATEGORIES.map(c => (
+                                        <MenuItemOption key={c.slug} value={c.slug}>{c.title}</MenuItemOption>
+                                    ))}
                                 </MenuOptionGroup>
                             </MenuList>
                         </Menu>
@@ -305,21 +305,21 @@ const UploadProduct = ({ uploadNewProduct }) => {
                             type={'file'}
                             name={'images'}
                             width={'50%'}
-                            accept={'image/png, image/jpg'}
+                            accept={'image/png, image/jpeg, image/webp'}
                             onChange={(e) => handleFileChange(e, 0)}
                         />
                         <Input
                             type={'file'}
                             name={'images'}
                             width={'50%'}
-                            accept={'image/png, image/jpg'}
+                            accept={'image/png, image/jpeg, image/webp'}
                             onChange={(e) => handleFileChange(e, 1)}
                         />
                         <Input
                             type={'file'}
                             name={'images'}
                             width={'50%'}
-                            accept={'image/png, image/jpg'}
+                            accept={'image/png, image/jpeg, image/webp'}
                             onChange={(e) => handleFileChange(e, 2)}
                         />
                         {errors.image &&
@@ -461,11 +461,18 @@ const UploadProduct = ({ uploadNewProduct }) => {
                 </VStack>
             </Flex>
 
+            <ProductDetailsForm
+                details={details}
+                setDetails={setDetails}
+                viewFiles={viewFiles}
+                setViewFiles={setViewFiles}
+            />
+
             <Button
                 loadingText={'Uploading product...'}
                 isLoading={isLoading}
                 mt={10}
-                width={'30%'}
+                width={{ base: 'full', md: '30%' }}
                 onClick={uploadProduct}>
                 Upload
             </Button>

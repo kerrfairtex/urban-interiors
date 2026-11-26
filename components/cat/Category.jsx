@@ -7,7 +7,15 @@ import shoeRack from '../../public/shoe_rack.png'
 import wardrobe from '../../public/wardrobe.png'
 import bed from '../../public/bed.png'
 import chair from '../../public/chair.png'
+import door from '../../public/door.png'
+import nightstand from '../../public/nightstand.png'
+import dresser from '../../public/dresser.png'
+import desk from '../../public/desk.png'
+import sideboard from '../../public/sideboard.png'
+import coffeeTable from '../../public/coffee_table.png'
+import bench from '../../public/bench.png'
 import Link from 'next/link'
+import { CATEGORIES } from '../../utils/categories'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 
@@ -21,14 +29,19 @@ const rotateKeyFrames = keyframes`
 `
 const rotateAnimation = `${rotateKeyFrames} 10s ease-in-out infinite`
 
-const CategoryItem = ({ catImg, catTitle }) => {
-    const category = catTitle.toLowerCase().replace(' ', '-')
+const icons = {
+    'sofa': couch, 'bed': bed, 'nightstand': nightstand, 'dresser': dresser,
+    'ward-robe': wardrobe, 'shoe-rack': shoeRack, 'shelf': shelf, 'tv-console': console,
+    'table-and-chair': chair, 'buffet-and-sideboard': sideboard, 'coffee-table': coffeeTable,
+    'desk': desk, 'bench': bench, 'doors': door
+}
 
+const CategoryItem = ({ catImg, catTitle, slug }) => {
     return (
         <Link
-            href={`/${category}`}>
+            href={`/${slug}`}>
             <Circle
-                size={'150px'}
+                size={{ base: '140px', md: '150px' }}
                 position={'relative'}>
                 <Box
                     as={motion.div}
@@ -62,6 +75,7 @@ const CategoryItem = ({ catImg, catTitle }) => {
                     <Text
                         fontWeight={'semibold'}
                         fontSize={'xs'}
+                        maxWidth={'110px'}
                         textColor={'black'}
                         textAlign={'center'}
                         textTransform={'uppercase'}
@@ -110,15 +124,13 @@ const Category = () => {
                 display={{ base: 'none', lg: 'flex' }}
                 direction={'row'}
                 marginTop={8}
-                spacing={5}
-                justifyContent={'space-between'}>
-                <CategoryItem catImg={couch} catTitle={'Sofa'} />
-                <CategoryItem catImg={bed} catTitle={'Bed'} />
-                <CategoryItem catImg={shoeRack} catTitle={'Shoe rack'} />
-                <CategoryItem catImg={wardrobe} catTitle={'Ward robe'} />
-                <CategoryItem catImg={shelf} catTitle={'Shelf'} />
-                <CategoryItem catImg={console} catTitle={'TV console'} />
-                <CategoryItem catImg={chair} catTitle={'Table and chair'} />
+                spacing={0}
+                gap={5}
+                flexWrap={'wrap'}
+                justifyContent={'center'}>
+                {CATEGORIES.map(c => (
+                    <CategoryItem key={c.slug} catImg={icons[c.slug]} catTitle={c.title} slug={c.slug} />
+                ))}
             </Stack>
 
             <Grid
@@ -126,16 +138,12 @@ const Category = () => {
                 marginTop={8}
                 gap={4}
                 gridTemplateColumns={{
-                    base: 'repeat(1, 1fr)',
-                    md: 'repeat(2, 1fr)'
+                    base: 'repeat(2, 1fr)',
+                    md: 'repeat(3, 1fr)'
                 }}>
-                <CategoryItem catImg={couch} catTitle={'Sofa'} />
-                <CategoryItem catImg={bed} catTitle={'Bed'} />
-                <CategoryItem catImg={shoeRack} catTitle={'Shoe rack'} />
-                <CategoryItem catImg={wardrobe} catTitle={'Ward robe'} />
-                <CategoryItem catImg={shelf} catTitle={'Shelf'} />
-                <CategoryItem catImg={console} catTitle={'TV console'} />
-                <CategoryItem catImg={chair} catTitle={'Table and chair'} />
+                {CATEGORIES.map(c => (
+                    <CategoryItem key={c.slug} catImg={icons[c.slug]} catTitle={c.title} slug={c.slug} />
+                ))}
             </Grid>
 
 

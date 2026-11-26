@@ -8,11 +8,12 @@ import { connect, useDispatch, useSelector } from 'react-redux'
 import { signOut } from '../../store/logoutReducer'
 
 import { searchProducts } from '../../store/searchReducer'
+import { CATEGORIES } from '../../utils/categories'
 
 const Navbar = ({ search }) => {
     const router = useRouter()
-    const auth = useSelector(state => state.persistFirebase.profile)
-    const cart = useSelector((state) => state.persistFirebase.profile.cart)
+    const auth = useSelector(state => state.session.profile)
+    const cart = useSelector((state) => state.session.profile.cart)
     const dispatch = useDispatch()
     const { isOpen, onOpen, onClose } = useDisclosure()
     const menuRef = useRef()
@@ -33,17 +34,35 @@ const Navbar = ({ search }) => {
                 justifyContent={'space-between'}
                 alignItems={'center'}>
 
-                <Text
-                    fontWeight={'semibold'}
-                    fontSize={{ base: 'sm', md: 'md' }}
-                    letterSpacing={'widest'}
-                    textColor={'black'}
-                    textTransform={'uppercase'}
-                    transition={'all .4s'}
-                    onClick={() => router.replace('/')}
-                    _hover={{ cursor: 'pointer', color: 'gold.500' }}>
-                    urban interiors
-                </Text>
+                <HStack
+                    spacing={{ base: 2, md: 3 }}
+                    alignItems={'center'}
+                    flexShrink={0}
+                    role={'group'}
+                    cursor={'pointer'}
+                    onClick={() => router.replace('/')}>
+                    <Text
+                        fontWeight={'semibold'}
+                        fontSize={{ base: 'sm', md: 'md' }}
+                        letterSpacing={'widest'}
+                        textColor={'black'}
+                        textTransform={'uppercase'}
+                        transition={'all .4s'}
+                        _groupHover={{ color: 'gold.500' }}>
+                        cebu urban interiors
+                    </Text>
+                    {/* Readable signature-style script */}
+                    <Text
+                        as={'span'}
+                        fontFamily={"'Great Vibes', cursive"}
+                        fontWeight={'normal'}
+                        fontSize={{ base: 'xl', md: '3xl' }}
+                        lineHeight={1}
+                        textColor={'black'}
+                        whiteSpace={'nowrap'}>
+                        Ka Elton Furniture
+                    </Text>
+                </HStack>
 
                 <InputGroup
                     size={'lg'}
@@ -186,25 +205,27 @@ const Navbar = ({ search }) => {
                             </HStack>
                             :
                             <>
-                                <IconButton
-                                    aria-label={'shopping cart'}
-                                    bg={'gold.100'}
-                                    color={'black'}
-                                    variant={'ghost'}
-                                    icon={
-                                        <Tooltip
-                                            hasArrow
-                                            label={'Admin'}
-                                            placement={'bottom'}
-                                            textColor={'white'}
-                                            bgColor={'gray.900'}>
-                                            <AngularLogo size={24} weight={'regular'} />
-                                        </Tooltip>
-                                    }
-                                    _hover={{
-                                        color: 'gold.500'
-                                    }}
-                                    onClick={() => router.push('/admin')} />
+                                {auth.isAdmin &&
+                                    <IconButton
+                                        aria-label={'admin'}
+                                        bg={'gold.100'}
+                                        color={'black'}
+                                        variant={'ghost'}
+                                        icon={
+                                            <Tooltip
+                                                hasArrow
+                                                label={'Admin'}
+                                                placement={'bottom'}
+                                                textColor={'white'}
+                                                bgColor={'gray.900'}>
+                                                <AngularLogo size={24} weight={'regular'} />
+                                            </Tooltip>
+                                        }
+                                        _hover={{
+                                            color: 'gold.500'
+                                        }}
+                                        onClick={() => router.push('/admin')} />
+                                }
 
                                 <IconButton
                                     aria-label={'account'}
@@ -278,7 +299,7 @@ const Navbar = ({ search }) => {
                     <DrawerOverlay />
                     <DrawerContent>
                         <DrawerCloseButton />
-                        <DrawerHeader>Urban Interiors</DrawerHeader>
+                        <DrawerHeader>Cebu Urban Interiors</DrawerHeader>
 
                         <DrawerBody>
                             {
@@ -350,41 +371,14 @@ const Navbar = ({ search }) => {
                                                 </h2>
                                                 <AccordionPanel>
                                                     <VStack alignItems={'start'}>
-                                                        <Link
-                                                            as={NextLink}
-                                                            href={'/sofa'}>
-                                                            Sofa
-                                                        </Link>
-                                                        <Link
-                                                            as={NextLink}
-                                                            href={'/bed'}>
-                                                            Bed
-                                                        </Link>
-                                                        <Link
-                                                            as={NextLink}
-                                                            href={'/shoe-rack'}>
-                                                            Shoe Rack
-                                                        </Link>
-                                                        <Link
-                                                            as={NextLink}
-                                                            href={'/ward-robe'}>
-                                                            Ward Robe
-                                                        </Link>
-                                                        <Link
-                                                            as={NextLink}
-                                                            href={'/shelf'}>
-                                                            Shelf
-                                                        </Link>
-                                                        <Link
-                                                            as={NextLink}
-                                                            href={'/tv-console'}>
-                                                            TV Console
-                                                        </Link>
-                                                        <Link
-                                                            as={NextLink}
-                                                            href={'/table-and-chair'}>
-                                                            Table and chair
-                                                        </Link>
+                                                        {CATEGORIES.map(c => (
+                                                            <Link
+                                                                key={c.slug}
+                                                                as={NextLink}
+                                                                href={`/${c.slug}`}>
+                                                                {c.title}
+                                                            </Link>
+                                                        ))}
                                                     </VStack>
                                                 </AccordionPanel>
                                             </AccordionItem>

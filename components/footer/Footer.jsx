@@ -1,10 +1,12 @@
 import { Divider, Flex, Grid, HStack, Icon, IconButton, Stack, Text, VStack } from '@chakra-ui/react';
 import Link from 'next/link'
-import { At, InstagramLogo, MapPinLine, TwitterLogo, WhatsappLogo } from 'phosphor-react';
+import { At, InstagramLogo, MapPinLine, Phone, TwitterLogo } from 'phosphor-react';
+
+const PHONE = '09637130812'
 import { useSelector } from 'react-redux';
 
 const Footer = () => {
-    const auth = useSelector(state => state.persistFirebase.profile)
+    const auth = useSelector(state => state.session.profile)
 
     return (
         <Flex
@@ -28,7 +30,7 @@ const Footer = () => {
                         fontSize={{base: 'xl', lg: '3xl'}}
                         textColor={'white'}
                         textTransform={'capitalize'}>
-                        urban interiors
+                        cebu urban interiors
                     </Text>
 
                     <Text
@@ -38,7 +40,7 @@ const Footer = () => {
                         maxWidth={'md'}
                         mt={5}
                         textAlign={{base: 'center', lg: 'start'}}>
-                        Urban interiors is a company that specializes in creating high-quality, handcrafted household furniture.
+                        Cebu Urban Interiors is a company that specializes in creating high-quality, handcrafted household furniture.
                         We also offer assembly services for IKEA products, ensuring that customers can enjoy their new furniture quickly and easily.
                     </Text>
 
@@ -191,24 +193,29 @@ const Footer = () => {
                             weight={'duotone'}
                         />
                         <Text
+                            as={'address'}
+                            fontStyle={'normal'}
                             color={'white'}
                             fontWeight={'normal'}
                             fontSize={'sm'}>
-                            Lagos, Nigeria
+                            Brgy. Santa Cruz, located in the municipality of Ronda Cebu
                         </Text>
                     </HStack>
                     <HStack>
                         <Icon
-                            as={WhatsappLogo}
+                            as={Phone}
                             color={'white'}
                             boxSize={5}
                             weight={'duotone'}
                         />
                         <Text
+                            as={'a'}
+                            href={`tel:${PHONE}`}
                             color={'white'}
                             fontWeight={'normal'}
-                            fontSize={'sm'}>
-                            +2349123456789
+                            fontSize={'sm'}
+                            _hover={{ color: 'gold.500' }}>
+                            0963 713 0812
                         </Text>
                     </HStack>
                     <HStack>

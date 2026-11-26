@@ -1,9 +1,10 @@
 import { Box, Button, Circle, Divider, Flex, HStack, IconButton, Stack, Text, VStack } from '@chakra-ui/react'
-import { doc, getDoc } from 'firebase/firestore'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import firebase from 'firebase/compat/app'
+import { fetchProductsByIds } from '../utils/api'
+import { SHIPPING_FEE } from '../utils/constants'
+import { describeSelection } from '../utils/productOptions'
 import { Minus, Plus, Trash } from 'phosphor-react'
 import { increaseQuantity, decreaseQuantity, deleteFromCart } from '../store/cartReducer'
 import { ToastContainer } from 'react-toastify'
@@ -43,6 +44,8 @@ const CartItem = ({ item, cart, onDelete }) => {
                         src={item.images[0]}
                         alt={''}
                         fill
+                        sizes={'100px'}
+                        style={{ objectFit: 'cover' }}
                     />
                 </Box>
 
@@ -60,13 +63,17 @@ const CartItem = ({ item, cart, onDelete }) => {
                         textOverflow={'ellipsis'}>
                         {item.productName}
                     </Text>
+                    {cartProduct?.options &&
+                        <Text fontSize={'xs'} textColor={'gray.600'} maxWidth={'xs'}>
+                            {describeSelection(cartProduct.options)}
+                        </Text>}
 
                     <Text
                         fontWeight={'medium'}
                         fontSize={'md'}
                         textAlign={'start'}
                         textColor={'black'}>
-                        {`₦${new Intl.NumberFormat().format(item.productPrice)}`}
+                        {`₱${new Intl.NumberFormat().format(cartProduct?.unitPrice ?? item.productPrice)}`}
                     </Text>
 
                 </VStack>
@@ -192,23 +199,14 @@ const CartItem = ({ item, cart, onDelete }) => {
 const Cart = () => {
 
     const router = useRouter()
-    const cart = useSelector((state) => state.persistFirebase.profile.cart)
+    const cart = useSelector((state) => state.session.profile.cart)
     const [product, setProduct] = useState([])
-    const firestore = firebase.firestore()
 
     useEffect(() => {
-        let productIds = Object.keys(cart ? cart.items : {})
-        let tempCart = []
-        const getCartItem = async () => {
-            await Promise.all(productIds.map(async (id) => {
-                const docRef = doc(firestore, `products/${id}`)
-                const docSnap = await getDoc(docRef)
-                if (docSnap.exists)
-                    tempCart.push({ pid: id, ...docSnap.data() })
-            }))
-            setProduct(tempCart)
-        }
-        getCartItem()
+        const productIds = Object.keys(cart ? cart.items : {})
+        fetchProductsByIds(productIds)
+            .then(products => setProduct(products))
+            .catch(() => setProduct([]))
     }, [cart])
 
     function deleteItem(id) {
@@ -348,7 +346,7 @@ const Cart = () => {
                                 <Text
                                     fontWeight={'normal'}
                                     textColor={'black'}>
-                                    {`₦${new Intl.NumberFormat().format(cart?.totalPrice)}`}
+                                    {`₱${new Intl.NumberFormat().format(cart?.totalPrice)}`}
                                 </Text>
                             </Flex>
                             <Divider orientation={'horizontal'} bgColor={'gray.200'} height={'1px'} />
@@ -366,7 +364,7 @@ const Cart = () => {
                                 <Text
                                     fontWeight={'normal'}
                                     textColor={'black'}>
-                                    ₦9,000
+                                    {`₱${new Intl.NumberFormat().format(SHIPPING_FEE)}`}
                                 </Text>
                             </Flex>
                             <Divider orientation={'horizontal'} bgColor={'gray.200'} height={'1px'} />
@@ -384,7 +382,7 @@ const Cart = () => {
                                 <Text
                                     fontWeight={'medium'}
                                     textColor={'black'}>
-                                    ₦99,000
+                                    {`₱${new Intl.NumberFormat().format((cart?.totalPrice || 0) + SHIPPING_FEE)}`}
                                 </Text>
                             </Flex>
 

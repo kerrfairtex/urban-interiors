@@ -2,16 +2,16 @@ import { Box, Button, Circle, Divider, Flex, HStack, IconButton, Stack, Text, VS
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { connect, useSelector } from 'react-redux';
-import firebase from 'firebase/compat/app'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.min.css'
-import { doc, getDoc } from 'firebase/firestore'
+import { fetchProductsByIds } from '../utils/api'
 import { Trash } from 'phosphor-react'
 import Image from 'next/image'
 
 import emptyFav from '../public/empty_fav.png'
 import { deleteFromWishlist } from '../store/wishlistReducer'
 import Meta from '../components/meta/Meta';
+import { priceLabel } from '../utils/productOptions'
 
 const WishlistItem = ({ item, onDelete }) => {
 
@@ -63,7 +63,7 @@ const WishlistItem = ({ item, onDelete }) => {
                         fontSize={'md'}
                         textAlign={'start'}
                         textColor={'black'}>
-                        {`₦${new Intl.NumberFormat().format(item.productPrice)}`}
+                        {priceLabel(item)}
                     </Text>
 
                 </VStack>
@@ -138,29 +138,19 @@ const WishlistItem = ({ item, onDelete }) => {
 const Wishlist = ({ addToCart, deleteFromWishlist }) => {
 
     const router = useRouter()
-    const wishlist = useSelector((state) => state.persistFirebase.profile.wishlist)
-    const cart = useSelector((state) => state.persistFirebase.profile.cart)
-    const hasNotAuth = useSelector((state) => state.persistFirebase.auth.isEmpty)
+    const wishlist = useSelector((state) => state.session.profile.wishlist)
+    const cart = useSelector((state) => state.session.profile.cart)
+    const hasNotAuth = useSelector((state) => state.session.auth.isEmpty)
     const [product, setProduct] = useState([])
-    const firestore = firebase.firestore()
 
     useEffect(() => {
         if (hasNotAuth) {
             router.replace('/signup')
             return
         }
-        let productIds = wishlist ? wishlist : []
-        let tempWishlist = []
-        const getWishlistItem = async () => {
-            await Promise.all(productIds.map(async (id) => {
-                const docRef = doc(firestore, `products/${id}`)
-                const docSnap = await getDoc(docRef)
-                if (docSnap.exists)
-                    tempWishlist.push({ pid: id, ...docSnap.data() })
-            }))
-            setProduct(tempWishlist)
-        }
-        getWishlistItem()
+        fetchProductsByIds(wishlist ? wishlist : [])
+            .then(products => setProduct(products))
+            .catch(() => setProduct([]))
     }, [hasNotAuth])
 
     function deleteItem(id) {

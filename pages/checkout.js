@@ -1,15 +1,16 @@
 import { Box, Button, color, Divider, Flex, Input, Stack, Text, useDisclosure, VStack } from '@chakra-ui/react'
 import { useEffect } from 'react'
 import { useState } from 'react'
-import { connect, useDispatch, useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.min.css'
 import { CheckoutValidation } from '../utils/validate'
-import firebase from 'firebase/compat/app'
-import { doc, getDoc } from 'firebase/firestore'
 import Image from 'next/image'
-import { usePaystackPayment } from 'react-paystack'
 import { useRouter } from 'next/router'
 
-import { deleteCart } from '../store/cartReducer'
+import { fetchProductsByIds } from '../utils/api'
+import { SHIPPING_FEE } from '../utils/constants'
+import { describeSelection } from '../utils/productOptions'
 import Meta from '../components/meta/Meta'
 import { addOrder } from '../store/orderReducer'
 
@@ -47,15 +48,19 @@ const CartItem = ({ item }) => {
                         noOfLines={2}
                         maxWidth={'xs'}
                         textOverflow={'ellipsis'}>
-                        {item.title}
+                        {item.productName}
                     </Text>
+                    {item.options &&
+                        <Text fontSize={'xs'} textColor={'gray.600'} maxWidth={'xs'}>
+                            {describeSelection(item.options)}
+                        </Text>}
 
                     <Text
                         fontWeight={'medium'}
                         fontSize={'sm'}
                         textAlign={'start'}
                         textColor={'black'}>
-                        {`₦${new Intl.NumberFormat().format(item.productPrice)}`}
+                        {`₱${new Intl.NumberFormat().format(item.productPrice)}`}
                     </Text>
 
                 </VStack>
@@ -70,13 +75,13 @@ const CartItem = ({ item }) => {
     )
 }
 
-const Checkout = ({ addOrder, clearCart }) => {
+const Checkout = () => {
 
     const router = useRouter()
-    const uid = useSelector((state) => state.persistFirebase.auth.uid)
-    const fullname = useSelector((state) => state.persistFirebase.profile.displayName)
-    const email = useSelector((state) => state.persistFirebase.profile.email)
-    const hasNotAuth = useSelector((state) => state.persistFirebase.auth.isEmpty)
+    const uid = useSelector((state) => state.session.auth.uid)
+    const fullname = useSelector((state) => state.session.profile.displayName)
+    const email = useSelector((state) => state.session.profile.email)
+    const hasNotAuth = useSelector((state) => state.session.auth.isEmpty)
 
     const [userData, setUserData] = useState({
         uid,
@@ -90,19 +95,9 @@ const Checkout = ({ addOrder, clearCart }) => {
     const [errors, setErrors] = useState({})
     const dispatch = useDispatch()
 
-    const order = useSelector((state) => state.order.data)
-    const cart = useSelector((state) => state.persistFirebase.profile.cart)
+    const cart = useSelector((state) => state.session.profile.cart)
     const [product, setProduct] = useState([])
-    const firestore = firebase.firestore()
-
-    const resolvedAmount = 100.0 * (cart?.totalPrice + 100.0) // resolve to kobo
-    const config = {
-        reference: (new Date()).getTime().toString(),
-        email: email,
-        amount: resolvedAmount,
-        publicKey: process.env.paystackPublicKey,
-    };
-    const initializePayment = usePaystackPayment(config);
+    const [placing, setPlacing] = useState(false)
 
     const handleFormChange = (e) => {
         const { name, value } = e.target
@@ -115,48 +110,27 @@ const Checkout = ({ addOrder, clearCart }) => {
             return
         }
 
-        let productIds = Object.keys(cart ? cart.items : {})
-        let tempCart = []
-        const getCartItem = async () => {
-            await Promise.all(productIds.map(async (id) => {
-                const docRef = doc(firestore, `products/${id}`)
-                const docSnap = await getDoc(docRef)
-                const quantity = cart.items[id].quantity
-                const color = cart.items[id].color
-
-                if (docSnap.exists)
-                    tempCart.push({
-                        pid: id, quantity, colorName: color.name,
-                        colorValue: color.value, ...docSnap.data()
-                    })
-            }))
-            setProduct(tempCart)
-        }
-        getCartItem()
+        const items = cart ? cart.items : {}
+        fetchProductsByIds(Object.keys(items))
+            .then(products => setProduct(products
+                .filter(p => items[p.pid])
+                .map(p => ({
+                    ...p,
+                    quantity: items[p.pid].quantity,
+                    productPrice: items[p.pid].unitPrice ?? p.productPrice,
+                    options: items[p.pid].options,
+                    colorName: items[p.pid].color?.name,
+                    colorValue: items[p.pid].color?.value
+                }))))
+            .catch(() => setProduct([]))
     }, [cart])
 
-    if (Object.keys(order).length > 0) router.push('/success')
-
-    const onSuccess = (reference) => {
-        clearCart()
-        const totalPrice = product.reduce(
-            (accumulator, currentProd) => accumulator + Number(currentProd.productPrice), 0
-        )
-        const modifiedItems = []
-        product.forEach(p => modifiedItems.push({
-            title: p.productName,
-            color: {
-                name: p.colorName,
-                value: p.colorValue
-            },
-            price: p.productPrice,
-            pid: p.pid,
-            category: p.category,
-            img: p.images[0],
-            quantity: p.quantity
-        }))
-
-        dispatch(addOrder(userData, totalPrice, modifiedItems))
+    // No online payment: the order is recorded as Pending and the store follows up with the customer.
+    const placeOrder = async () => {
+        setPlacing(true)
+        const order = await dispatch(addOrder(userData))
+        setPlacing(false)
+        if (order) router.push('/success')
     }
 
     if (hasNotAuth) return null // don't render any UI since auth state has not been verified
@@ -168,6 +142,7 @@ const Checkout = ({ addOrder, clearCart }) => {
             paddingY={{ base: 6, lg: 8 }}
             flexDirection={'column'}>
             <Meta title={'Checkout | Fobath Woodwork'} />
+            <ToastContainer />
 
             <Text
                 color={'gold.500'}
@@ -359,8 +334,9 @@ const Checkout = ({ addOrder, clearCart }) => {
                     </VStack>
 
                     <Button
-                        // isLoading={loading}
-                        loadingText={'Please wait'}
+                        isLoading={placing}
+                        isDisabled={product.length === 0}
+                        loadingText={'Placing order'}
                         variant={'solid'}
                         width={{base: 'full', lg: '40%'}}
                         marginTop={10}
@@ -376,12 +352,12 @@ const Checkout = ({ addOrder, clearCart }) => {
                             )
                             if (Object.keys(errors).length === 0) {
                                 setErrors({})
-                                initializePayment(onSuccess, null)
+                                placeOrder()
                             } else {
                                 setErrors(errors);
                             }
                         }}>
-                        Continue with payment
+                        Place order
                     </Button>
                 </Flex>
 
@@ -430,7 +406,7 @@ const Checkout = ({ addOrder, clearCart }) => {
                             fontWeight={'normal'}
                             textColor={'black'}
                             fontSize={'sm'}>
-                            {`₦${new Intl.NumberFormat().format(cart?.totalPrice)}`}
+                            {`₱${new Intl.NumberFormat().format(cart?.totalPrice)}`}
                         </Text>
                     </Flex>
                     <Divider orientation={'horizontal'} bgColor={'gray.200'} height={'.1px'} />
@@ -449,7 +425,7 @@ const Checkout = ({ addOrder, clearCart }) => {
                             fontWeight={'normal'}
                             textColor={'black'}
                             fontSize={'sm'}>
-                            ₦9,000
+                            {`₱${new Intl.NumberFormat().format(SHIPPING_FEE)}`}
                         </Text>
                     </Flex>
                     <Divider orientation={'horizontal'} bgColor={'gray.200'} height={'.1px'} />
@@ -467,7 +443,7 @@ const Checkout = ({ addOrder, clearCart }) => {
                         <Text
                             fontWeight={'medium'}
                             textColor={'black'}>
-                            ₦99,000
+                            {`₱${new Intl.NumberFormat().format((cart?.totalPrice || 0) + SHIPPING_FEE)}`}
                         </Text>
                     </Flex>
 
@@ -478,13 +454,4 @@ const Checkout = ({ addOrder, clearCart }) => {
     )
 }
 
-export const matchDispatchToProps = dispatch => {
-    return {
-        addOrder: (userInfo, totalPrice, items) =>
-            dispatch(addOrder(userInfo, totalPrice, items)),
-        clearCart: () => dispatch(deleteCart())
-    }
-}
-
-
-export default connect(null, matchDispatchToProps)(Checkout)
+export default Checkout
