@@ -11,6 +11,7 @@ import Image from 'next/image'
 import emptyFav from '../public/empty_fav.png'
 import { deleteFromWishlist } from '../store/wishlistReducer'
 import Meta from '../components/meta/Meta';
+import { priceLabel } from '../utils/productOptions'
 
 const WishlistItem = ({ item, onDelete }) => {
 
@@ -62,7 +63,7 @@ const WishlistItem = ({ item, onDelete }) => {
                         fontSize={'md'}
                         textAlign={'start'}
                         textColor={'black'}>
-                        {`₱${new Intl.NumberFormat().format(item.productPrice)}`}
+                        {priceLabel(item)}
                     </Text>
 
                 </VStack>

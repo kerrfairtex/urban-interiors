@@ -39,8 +39,18 @@ export const addNewProduct = (product, changeLoadState) => {
                 })
                 return blob.url
             }))
+            const views = {}
+            for (const [key, file] of Object.entries(product.viewFiles || {})) {
+                if (!file) continue
+                const blob = await upload(`products/${product.category}/${key}-${file.name}`, file, {
+                    access: 'public',
+                    handleUploadUrl: '/api/admin/upload'
+                })
+                views[key] = blob.url
+            }
+            const { viewFiles, ...rest } = product
             const { product: saved } = await api('/api/admin/products', {
-                method: 'POST', body: { ...product, images }
+                method: 'POST', body: { ...rest, images, details: { ...rest.details, views } }
             })
             dispatch(addProduct({
                 ...dataState,

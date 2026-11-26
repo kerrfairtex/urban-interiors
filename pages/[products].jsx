@@ -45,6 +45,7 @@ import { getProducts, getProductsByColor, getProductsByPrice } from '../store/pr
 import Image from 'next/image'
 import { categoryTitle } from '../utils/categories'
 import Meta from '../components/meta/Meta';
+import { priceLabel } from '../utils/productOptions'
 
 const LoadingSkeleton = () => {
     return (
@@ -371,7 +372,7 @@ const Products = ({ getProducts, getProductsByColor, getProductsByPrice }) => {
                                         productId={product.pid}
                                         productTitle={product.productName}
                                         productImg={product.images[0]}
-                                        productPrice={product.productPrice}
+                                        productPrice={priceLabel(product)}
                                     />))
                             }
                         </Grid>

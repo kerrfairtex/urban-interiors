@@ -111,7 +111,7 @@ const ProductItem = ({ productId, productTitle, productImg, productPrice, addToW
                 textColor={'black'}
                 paddingStart={2}
                 paddingBottom={4}>
-                {`₱${new Intl.NumberFormat().format(productPrice)}`}
+                {productPrice}
             </Text>
         </Flex>
     )

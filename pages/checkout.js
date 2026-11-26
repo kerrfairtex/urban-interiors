@@ -10,6 +10,7 @@ import { useRouter } from 'next/router'
 
 import { fetchProductsByIds } from '../utils/api'
 import { SHIPPING_FEE } from '../utils/constants'
+import { describeSelection } from '../utils/productOptions'
 import Meta from '../components/meta/Meta'
 import { addOrder } from '../store/orderReducer'
 
@@ -47,8 +48,12 @@ const CartItem = ({ item }) => {
                         noOfLines={2}
                         maxWidth={'xs'}
                         textOverflow={'ellipsis'}>
-                        {item.title}
+                        {item.productName}
                     </Text>
+                    {item.options &&
+                        <Text fontSize={'xs'} textColor={'gray.600'} maxWidth={'xs'}>
+                            {describeSelection(item.options)}
+                        </Text>}
 
                     <Text
                         fontWeight={'medium'}
@@ -112,6 +117,8 @@ const Checkout = () => {
                 .map(p => ({
                     ...p,
                     quantity: items[p.pid].quantity,
+                    productPrice: items[p.pid].unitPrice ?? p.productPrice,
+                    options: items[p.pid].options,
                     colorName: items[p.pid].color?.name,
                     colorValue: items[p.pid].color?.value
                 }))))

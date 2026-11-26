@@ -13,6 +13,8 @@ export const cartSlice = createSlice({
         addItemToCart(state, action) {
             if (action.payload.info === 'ADD')
                 toast.success('Item has been added to Cart')
+            else if (action.payload.info === 'UPDATE')
+                toast.success('Cart updated to your new selection')
             else if (action.payload.info === 'FAIL')
                 toast.info('Item already exists in Cart')
             return { ...state, info: action.payload.info }
@@ -53,17 +55,11 @@ const updateCart = async (dispatch, body) => {
     }
 }
 
-export const addToCart = (productId, productPrice, colorName, colorValue, cart) => {
+export const addToCart = (productId, options, cart) => {
     return async (dispatch) => {
-        if (cart?.items && Object.keys(cart.items).includes(productId)) {
-            dispatch(addItemToCart({ info: 'FAIL' }))
-            return
-        }
-        const result = await updateCart(dispatch, {
-            action: 'add', productId, color: { name: colorName, value: colorValue }
-        })
-        if (result === 'FAIL') dispatch(addItemToCart({ info: 'FAIL' }))
-        else if (result) dispatch(addItemToCart({ info: 'ADD' }))
+        const existed = !!cart?.items?.[productId]
+        const result = await updateCart(dispatch, { action: 'add', productId, options })
+        if (result === true) dispatch(addItemToCart({ info: existed ? 'UPDATE' : 'ADD' }))
     }
 }
 

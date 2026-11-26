@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { fetchProductsByIds } from '../utils/api'
 import { SHIPPING_FEE } from '../utils/constants'
+import { describeSelection } from '../utils/productOptions'
 import { Minus, Plus, Trash } from 'phosphor-react'
 import { increaseQuantity, decreaseQuantity, deleteFromCart } from '../store/cartReducer'
 import { ToastContainer } from 'react-toastify'
@@ -43,6 +44,8 @@ const CartItem = ({ item, cart, onDelete }) => {
                         src={item.images[0]}
                         alt={''}
                         fill
+                        sizes={'100px'}
+                        style={{ objectFit: 'cover' }}
                     />
                 </Box>
 
@@ -60,13 +63,17 @@ const CartItem = ({ item, cart, onDelete }) => {
                         textOverflow={'ellipsis'}>
                         {item.productName}
                     </Text>
+                    {cartProduct?.options &&
+                        <Text fontSize={'xs'} textColor={'gray.600'} maxWidth={'xs'}>
+                            {describeSelection(cartProduct.options)}
+                        </Text>}
 
                     <Text
                         fontWeight={'medium'}
                         fontSize={'md'}
                         textAlign={'start'}
                         textColor={'black'}>
-                        {`₱${new Intl.NumberFormat().format(item.productPrice)}`}
+                        {`₱${new Intl.NumberFormat().format(cartProduct?.unitPrice ?? item.productPrice)}`}
                     </Text>
 
                 </VStack>

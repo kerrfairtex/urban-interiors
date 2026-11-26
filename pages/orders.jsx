@@ -8,6 +8,7 @@ import { retrieveOrders } from '../store/orderReducer'
 import emptyOrder from '../public/package.png'
 import { useRouter } from 'next/router'
 import Meta from '../components/meta/Meta'
+import { describeSelection } from '../utils/productOptions'
 
 const InfoText = ({ subtitle, info, color }) => {
     return (
@@ -71,6 +72,10 @@ const OrderItem = ({ order }) => {
                             textOverflow={'ellipsis'}>
                             {order.title}
                         </Text>
+                        {order.options &&
+                            <Text fontSize={'xs'} textColor={'gray.600'} maxWidth={'xs'}>
+                                {describeSelection(order.options)}
+                            </Text>}
 
                         <Text
                             fontWeight={'medium'}
@@ -87,11 +92,11 @@ const OrderItem = ({ order }) => {
                     display={{base: 'none', lg: 'flex'}}>
 
                     <Circle size={'32px'} borderWidth={1} borderColor={'blackAlpha.500'}>
-                        <CircleIcon weight={'fill'} color={order.color.value} size={32} />
+                        <CircleIcon weight={'fill'} color={order.color?.value} size={32} />
                     </Circle>
 
                     <Text textTransform={'capitalize'}>
-                        {order.color.name}
+                        {order.color?.name}
                     </Text>
 
                 </VStack>
@@ -116,11 +121,11 @@ const OrderItem = ({ order }) => {
                     alignItems={'start'}>
 
                     <Circle size={'28px'} borderWidth={1} borderColor={'blackAlpha.500'}>
-                        <CircleIcon weight={'fill'} color={order.color.value} size={24} />
+                        <CircleIcon weight={'fill'} color={order.color?.value} size={24} />
                     </Circle>
 
                     <Text textTransform={'capitalize'} fontSize={'sm'}>
-                        {order.color.name}
+                        {order.color?.name}
                     </Text>
 
                 </VStack>

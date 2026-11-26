@@ -32,9 +32,10 @@ export default withUser(async (req, res, user) => {
             pid: p.id,
             title: p.product_name,
             category: p.category,
-            price: Number(p.product_price),
+            price: cart.items[p.id].unitPrice,
             img: p.images[0] || null,
             quantity: cart.items[p.id].quantity,
+            options: cart.items[p.id].options,
             color: cart.items[p.id].color
         }))
 

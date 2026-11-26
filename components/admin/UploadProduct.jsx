@@ -4,6 +4,7 @@ import { useState } from "react"
 import { connect } from "react-redux"
 
 import { addNewProduct } from "../../store/addProductReducer"
+import ProductDetailsForm, { detailsForSave, emptyDetails } from "./ProductDetailsForm"
 
 import { AddProductValidation } from '../../utils/validate'
 import { CATEGORIES } from '../../utils/categories'
@@ -23,6 +24,8 @@ const UploadProduct = ({ uploadNewProduct }) => {
         desc: ''
     })
 
+    const [details, setDetails] = useState(emptyDetails)
+    const [viewFiles, setViewFiles] = useState({})
     const [errors, setErrors] = useState({})
     const [isLoading, setIsLoading] = useState(false)
 
@@ -83,6 +86,8 @@ const UploadProduct = ({ uploadNewProduct }) => {
                 height: Number(product.height),
                 color: selectedColorName,
                 colorValue: selectedColorValue,
+                details: detailsForSave(details),
+                viewFiles
             }
 
             changeLoadState()
@@ -300,21 +305,21 @@ const UploadProduct = ({ uploadNewProduct }) => {
                             type={'file'}
                             name={'images'}
                             width={'50%'}
-                            accept={'image/png, image/jpg'}
+                            accept={'image/png, image/jpeg, image/webp'}
                             onChange={(e) => handleFileChange(e, 0)}
                         />
                         <Input
                             type={'file'}
                             name={'images'}
                             width={'50%'}
-                            accept={'image/png, image/jpg'}
+                            accept={'image/png, image/jpeg, image/webp'}
                             onChange={(e) => handleFileChange(e, 1)}
                         />
                         <Input
                             type={'file'}
                             name={'images'}
                             width={'50%'}
-                            accept={'image/png, image/jpg'}
+                            accept={'image/png, image/jpeg, image/webp'}
                             onChange={(e) => handleFileChange(e, 2)}
                         />
                         {errors.image &&
@@ -456,11 +461,18 @@ const UploadProduct = ({ uploadNewProduct }) => {
                 </VStack>
             </Flex>
 
+            <ProductDetailsForm
+                details={details}
+                setDetails={setDetails}
+                viewFiles={viewFiles}
+                setViewFiles={setViewFiles}
+            />
+
             <Button
                 loadingText={'Uploading product...'}
                 isLoading={isLoading}
                 mt={10}
-                width={'30%'}
+                width={{ base: 'full', md: '30%' }}
                 onClick={uploadProduct}>
                 Upload
             </Button>

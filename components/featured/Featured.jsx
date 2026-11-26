@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.min.css'
 import noProduct from '../../public/no_product.png'
 
 import { getProductsBySubCategory } from '../../store/productsReducer'
+import { priceLabel } from '../../utils/productOptions'
 
 const LoadingSkeleton = () => {
     return (
@@ -113,7 +114,7 @@ const FeaturedItem = ({ productId, productName, productPrice,
                 textColor={'gray.900'}
                 paddingStart={2}
                 paddingBottom={2}>
-                {`₱${new Intl.NumberFormat().format(productPrice)}`}
+                {productPrice}
             </Text>
 
             <Button
@@ -202,7 +203,7 @@ const ProductCollection = ({ productState }) => {
                         key={index}
                         productId={product.pid}
                         productName={product.productName}
-                        productPrice={product.productPrice}
+                        productPrice={priceLabel(product)}
                         productImg={product.images[0]}
                         productCat={product.category}
                     />
