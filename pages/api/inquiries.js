@@ -1,6 +1,7 @@
 import { db, isUuid, toProduct } from '../../lib/db'
 import { withErrors } from '../../lib/auth'
 import { normalizeSelection, unitPrice } from '../../utils/productOptions'
+import { notifyInquiry } from '../../lib/notify'
 
 // Public: anyone can ask about a product (no account needed). The quoted price is
 // recalculated here from the chosen options.
@@ -30,5 +31,14 @@ export default withErrors(async (req, res) => {
         INSERT INTO inquiries (product_id, product_name, selection, quoted_price, name, phone, email, message)
         VALUES (${product.pid}, ${product.productName}, ${JSON.stringify(selection)}::jsonb, ${price},
                 ${name}, ${phone}, ${email}, ${message})`
+
+    // Email the owner. The inquiry is already saved, so a failed email never fails the request.
+    const host = req.headers['x-forwarded-host'] || req.headers.host
+    const siteUrl = host ? `https://${host}` : ''
+    try {
+        await notifyInquiry({ product, selection, price, name, phone, email, message, siteUrl })
+    } catch (e) {
+        console.error('Inquiry email failed:', e.message)
+    }
     return res.status(201).json({ ok: true })
 })
