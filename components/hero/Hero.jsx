@@ -27,6 +27,7 @@ import kaElton21 from "../../public/ka-elton/ka-elton-21.jpg";
 import kaElton22 from "../../public/ka-elton/ka-elton-22.jpg";
 import kaElton23 from "../../public/ka-elton/ka-elton-23.jpg";
 import kaElton24 from "../../public/ka-elton/ka-elton-24.jpg";
+import kaElton25 from "../../public/ka-elton/ka-elton-25.jpg";
 
 const heroPhotos = [
     { src: kaElton01, alt: "Solid wood panelled door standing in the Ka Elton workshop" },
@@ -52,6 +53,7 @@ const heroPhotos = [
     { src: kaElton22, alt: "Craftsman varnishing a wooden bed with a panelled headboard" },
     { src: kaElton23, alt: "Row of new slatted wooden bed frames in the workshop yard" },
     { src: kaElton24, alt: "Finished wooden bed frames lined up outside the workshop" },
+    { src: kaElton25, alt: "Boy sitting on a newly built wooden bed frame in the workshop yard" },
 ];
 
 const SLIDE_INTERVAL_MS = 5000;
