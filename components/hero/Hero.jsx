@@ -4,30 +4,40 @@ import Image from "next/image";
 import { CaretLeft, CaretRight } from "phosphor-react";
 import { useEffect, useRef, useState } from "react";
 
-import hero01 from "../../public/hero/hero-01.jpg";
-import hero02 from "../../public/hero/hero-02.jpg";
-import hero03 from "../../public/hero/hero-03.jpg";
-import hero04 from "../../public/hero/hero-04.jpg";
-import hero05 from "../../public/hero/hero-05.jpg";
-import hero06 from "../../public/hero/hero-06.jpg";
-import hero07 from "../../public/hero/hero-07.jpg";
-import hero08 from "../../public/hero/hero-08.jpg";
-import hero09 from "../../public/hero/hero-09.jpg";
-import hero10 from "../../public/hero/hero-10.jpg";
-import heritageBedroom from "../../public/bedroom-heritage.jpeg";
+import kaElton01 from "../../public/ka-elton/ka-elton-01.jpg";
+import kaElton02 from "../../public/ka-elton/ka-elton-02.jpg";
+import kaElton03 from "../../public/ka-elton/ka-elton-03.jpg";
+import kaElton04 from "../../public/ka-elton/ka-elton-04.jpg";
+import kaElton05 from "../../public/ka-elton/ka-elton-05.jpg";
+import kaElton06 from "../../public/ka-elton/ka-elton-06.jpg";
+import kaElton07 from "../../public/ka-elton/ka-elton-07.jpg";
+import kaElton08 from "../../public/ka-elton/ka-elton-08.jpg";
+import kaElton09 from "../../public/ka-elton/ka-elton-09.jpg";
+import kaElton10 from "../../public/ka-elton/ka-elton-10.jpg";
+import kaElton11 from "../../public/ka-elton/ka-elton-11.jpg";
+import kaElton12 from "../../public/ka-elton/ka-elton-12.jpg";
+import kaElton13 from "../../public/ka-elton/ka-elton-13.jpg";
+import kaElton14 from "../../public/ka-elton/ka-elton-14.jpg";
+import kaElton15 from "../../public/ka-elton/ka-elton-15.jpg";
+import kaElton17 from "../../public/ka-elton/ka-elton-17.jpg";
 
 const heroPhotos = [
-    { src: hero01, alt: "Sofa: leather sofa with a solid wood side table" },
-    { src: hero02, alt: "Bed: wooden bed frame in a wood-panelled bedroom" },
-    { src: heritageBedroom, alt: "Handcrafted dark wood bed frame in a warm, heritage-style room" },
-    { src: hero03, alt: "TV console: light wood TV console with open shelving" },
-    { src: hero04, alt: "Table and chair: modern wooden dining table with chairs" },
-    { src: hero05, alt: "Wardrobe: open wooden wardrobe with drawers and shelves" },
-    { src: hero06, alt: "Shelf: tall wooden bookshelf with a library ladder" },
-    { src: hero07, alt: "Shoe rack: rustic wooden shoe rack" },
-    { src: hero08, alt: "Doors: wooden doors in wood-panelled walls" },
-    { src: hero09, alt: "Sofa: minimalist sofa beside a wooden sideboard" },
-    { src: hero10, alt: "Table and chair: live-edge wooden dining table with chairs" },
+    { src: kaElton01, alt: "Solid wood panelled door standing in the Ka Elton workshop" },
+    { src: kaElton02, alt: "Curved wooden bedside cabinet with open shelves" },
+    { src: kaElton03, alt: "Wooden bedside cabinets and shelving units awaiting finishing" },
+    { src: kaElton04, alt: "Tall wooden wardrobe frame with open shelves" },
+    { src: kaElton05, alt: "Craftsman fitting a wooden door with decorative inlay" },
+    { src: kaElton06, alt: "Long wooden shoe rack with slatted shelves" },
+    { src: kaElton07, alt: "Panelled wooden door with a warm varnish finish" },
+    { src: kaElton08, alt: "Craftsman spray-varnishing a wooden door" },
+    { src: kaElton09, alt: "Finished slatted wooden bed frame outside the workshop" },
+    { src: kaElton10, alt: "Live-edge solid wood slabs ready for tabletops" },
+    { src: kaElton11, alt: "Craftsmen planing timber boards in the workshop" },
+    { src: kaElton12, alt: "Craftsman shaping a timber board at the planer" },
+    { src: kaElton13, alt: "Craftsman cutting timber at the workshop saw" },
+    { src: kaElton14, alt: "Stacks of timber in the open-air workshop" },
+    { src: kaElton15, alt: "Craftsman finishing a long wooden shoe rack" },
+    { src: kaElton17, alt: "Wooden shoe rack and shelving units in the workshop" },
 ];
 
 const SLIDE_INTERVAL_MS = 5000;
@@ -84,7 +94,7 @@ const HeroSlideshow = () => {
         <Box
             position="relative"
             width="full"
-            maxWidth="720px"
+            maxWidth={{ base: "360px", md: "420px", lg: "480px" }}
             overflow="hidden"
             rounded="2xl"
             boxShadow="xl"
@@ -118,7 +128,7 @@ const HeroSlideshow = () => {
                 if (distance > SWIPE_THRESHOLD_PX) showPrevious();
                 if (distance < -SWIPE_THRESHOLD_PX) showNext();
             }}
-            style={{ aspectRatio: "3 / 2", touchAction: "pan-y" }}
+            style={{ aspectRatio: "3 / 4", touchAction: "pan-y" }}
         >
             {heroPhotos.map((photo, index) => (
                 <Box
@@ -138,7 +148,7 @@ const HeroSlideshow = () => {
                         src={photo.src}
                         alt={photo.alt}
                         fill
-                        sizes="(max-width: 992px) 100vw, 55vw"
+                        sizes="(max-width: 768px) 360px, (max-width: 992px) 420px, 480px"
                         style={{ objectFit: "cover" }}
                         placeholder="blur"
                         priority={index === 0}
@@ -174,7 +184,7 @@ const HeroSlideshow = () => {
                 alignItems="center"
             >
                 <Text
-                    display={{ base: "block", sm: "none" }}
+                    display={{ base: "block", lg: "none" }}
                     paddingX={3}
                     paddingY={1}
                     rounded="full"
@@ -185,7 +195,7 @@ const HeroSlideshow = () => {
                 >
                     {current + 1} / {total}
                 </Text>
-                <Flex display={{ base: "none", sm: "flex" }} alignItems="center">
+                <Flex display={{ base: "none", lg: "flex" }} alignItems="center">
                 {heroPhotos.map((photo, index) => (
                     // 24x24 tap target around a small visible pill.
                     <Box
