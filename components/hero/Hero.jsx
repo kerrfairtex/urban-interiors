@@ -1,7 +1,8 @@
 import { Box, Button, Flex, Text, VStack } from "@chakra-ui/react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { CaretLeft, CaretRight } from "phosphor-react";
+import { useEffect, useRef, useState } from "react";
 
 import hero01 from "../../public/hero/hero-01.jpg";
 import hero02 from "../../public/hero/hero-02.jpg";
@@ -29,21 +30,55 @@ const heroPhotos = [
     { src: hero10, alt: "Table and chair: live-edge wooden dining table with chairs" },
 ];
 
-const SLIDE_INTERVAL_MS = 3000;
+const SLIDE_INTERVAL_MS = 5000;
+const SWIPE_THRESHOLD_PX = 40;
+
+const arrowButtonProps = {
+    position: "absolute",
+    top: "50%",
+    transform: "translateY(-50%)",
+    minWidth: 10,
+    height: 10,
+    padding: 0,
+    rounded: "full",
+    color: "white",
+    background: "blackAlpha.500",
+    _hover: { background: "blackAlpha.700" },
+    _active: { background: "blackAlpha.800" },
+};
 
 const HeroSlideshow = () => {
+    const prefersReducedMotion = useReducedMotion();
     const [current, setCurrent] = useState(0);
-    const [isPaused, setIsPaused] = useState(false);
+    // The Play/Pause button controls userPaused. Hover and keyboard focus only
+    // pause temporarily, so they never change what the button shows.
+    const [userPaused, setUserPaused] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
+    const [hasFocus, setHasFocus] = useState(false);
+    const touchStartX = useRef(null);
 
+    // Don't autoplay for people who asked their device to reduce motion.
     useEffect(() => {
-        if (isPaused) return undefined;
+        if (prefersReducedMotion) setUserPaused(true);
+    }, [prefersReducedMotion]);
 
-        const timer = window.setInterval(
+    const isRotating = !userPaused && !isHovered && !hasFocus;
+
+    // Restart the countdown after every slide change, so a manual change
+    // gets the full interval before the next automatic one.
+    useEffect(() => {
+        if (!isRotating) return undefined;
+
+        const timer = window.setTimeout(
             () => setCurrent((index) => (index + 1) % heroPhotos.length),
             SLIDE_INTERVAL_MS
         );
-        return () => window.clearInterval(timer);
-    }, [isPaused]);
+        return () => window.clearTimeout(timer);
+    }, [isRotating, current]);
+
+    const total = heroPhotos.length;
+    const showPrevious = () => setCurrent((index) => (index - 1 + total) % total);
+    const showNext = () => setCurrent((index) => (index + 1) % total);
 
     return (
         <Box
@@ -56,13 +91,34 @@ const HeroSlideshow = () => {
             role="region"
             aria-roledescription="carousel"
             aria-label="Featured furniture"
-            onMouseEnter={() => setIsPaused(true)}
-            onMouseLeave={() => setIsPaused(false)}
-            onFocus={() => setIsPaused(true)}
-            onBlur={(event) => {
-                if (!event.currentTarget.contains(event.relatedTarget)) setIsPaused(false);
+            // Pointer events let us ignore the fake "hover" a tap creates on touch screens.
+            onPointerEnter={(event) => {
+                if (event.pointerType === "mouse") setIsHovered(true);
             }}
-            style={{ aspectRatio: "3 / 2" }}
+            onPointerLeave={(event) => {
+                if (event.pointerType === "mouse") setIsHovered(false);
+            }}
+            onFocus={(event) => {
+                if (event.target.matches(":focus-visible")) setHasFocus(true);
+            }}
+            onBlur={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget)) setHasFocus(false);
+            }}
+            onKeyDown={(event) => {
+                if (event.key === "ArrowLeft") showPrevious();
+                if (event.key === "ArrowRight") showNext();
+            }}
+            onTouchStart={(event) => {
+                touchStartX.current = event.touches[0].clientX;
+            }}
+            onTouchEnd={(event) => {
+                if (touchStartX.current === null) return;
+                const distance = event.changedTouches[0].clientX - touchStartX.current;
+                touchStartX.current = null;
+                if (distance > SWIPE_THRESHOLD_PX) showPrevious();
+                if (distance < -SWIPE_THRESHOLD_PX) showNext();
+            }}
+            style={{ aspectRatio: "3 / 2", touchAction: "pan-y" }}
         >
             {heroPhotos.map((photo, index) => (
                 <Box
@@ -73,9 +129,9 @@ const HeroSlideshow = () => {
                     initial={false}
                     animate={{
                         opacity: index === current ? 1 : 0,
-                        scale: index === current ? 1 : 1.08,
+                        scale: index === current || prefersReducedMotion ? 1 : 1.08,
                     }}
-                    transition={{ duration: 1.2, ease: "easeInOut" }}
+                    transition={{ duration: prefersReducedMotion ? 0.2 : 1.2, ease: "easeInOut" }}
                     aria-hidden={index !== current}
                 >
                     <Image
@@ -90,16 +146,48 @@ const HeroSlideshow = () => {
                 </Box>
             ))}
 
+            <Button
+                type="button"
+                aria-label="Previous photo"
+                onClick={showPrevious}
+                left={3}
+                {...arrowButtonProps}
+            >
+                <CaretLeft size={22} weight="bold" aria-hidden />
+            </Button>
+            <Button
+                type="button"
+                aria-label="Next photo"
+                onClick={showNext}
+                right={3}
+                {...arrowButtonProps}
+            >
+                <CaretRight size={22} weight="bold" aria-hidden />
+            </Button>
+
             <Flex
                 position="absolute"
-                bottom={3}
+                bottom={2}
                 left={0}
                 right={0}
                 justifyContent="center"
                 alignItems="center"
-                gap={2}
             >
+                <Text
+                    display={{ base: "block", sm: "none" }}
+                    paddingX={3}
+                    paddingY={1}
+                    rounded="full"
+                    background="blackAlpha.600"
+                    color="white"
+                    fontSize="xs"
+                    fontWeight="semibold"
+                >
+                    {current + 1} / {total}
+                </Text>
+                <Flex display={{ base: "none", sm: "flex" }} alignItems="center">
                 {heroPhotos.map((photo, index) => (
+                    // 24x24 tap target around a small visible pill.
                     <Box
                         key={photo.alt}
                         as="button"
@@ -107,18 +195,32 @@ const HeroSlideshow = () => {
                         aria-label={`Show photo ${index + 1}: ${photo.alt}`}
                         aria-current={index === current ? "true" : undefined}
                         onClick={() => setCurrent(index)}
-                        width={index === current ? 6 : 2}
-                        height={2}
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        minWidth={index === current ? 8 : 6}
+                        height={6}
                         rounded="full"
-                        bgColor={index === current ? "white" : "whiteAlpha.600"}
-                        transition="all .4s"
-                        _focusVisible={{ outline: "2px solid white", outlineOffset: "2px" }}
-                    />
+                        transition="min-width .4s"
+                        _focusVisible={{ outline: "2px solid white", outlineOffset: "0" }}
+                    >
+                        <Box
+                            as="span"
+                            width={index === current ? 6 : 2}
+                            height={2}
+                            rounded="full"
+                            bgColor={index === current ? "white" : "whiteAlpha.700"}
+                            boxShadow="0 0 2px rgba(0, 0, 0, 0.5)"
+                            transition="all .4s"
+                        />
+                    </Box>
                 ))}
+                </Flex>
                 <Button
                     type="button"
-                    aria-label={isPaused ? "Play image rotation" : "Pause image rotation"}
-                    onClick={() => setIsPaused((paused) => !paused)}
+                    marginLeft={2}
+                    aria-label={userPaused ? "Play image rotation" : "Pause image rotation"}
+                    onClick={() => setUserPaused((paused) => !paused)}
                     minWidth={8}
                     height={8}
                     padding={0}
@@ -127,7 +229,7 @@ const HeroSlideshow = () => {
                     _hover={{ background: "blackAlpha.800" }}
                     fontSize="xs"
                 >
-                    {isPaused ? "Play" : "Pause"}
+                    {userPaused ? "Play" : "Pause"}
                 </Button>
             </Flex>
         </Box>
