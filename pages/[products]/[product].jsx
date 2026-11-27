@@ -21,7 +21,7 @@ import Meta from '../../components/meta/Meta'
 import { api } from '../../utils/api'
 import { categoryTitle } from '../../utils/categories'
 import {
-    chosen, describeSelection, getDimensions, getGroups, normalizeSelection, peso, unitPrice, VIEW_SLOTS
+    chosen, describeSelection, getDimensions, getGroups, normalizeSelection, peso, priceLabel, unitPrice, VIEW_SLOTS
 } from '../../utils/productOptions'
 
 const Product3D = dynamic(() => import('../../components/product/Product3D'), {
@@ -32,9 +32,25 @@ const Product3D = dynamic(() => import('../../components/product/Product3D'), {
 const STORE_PHONE = '09637130812'
 // Facebook Page username for the "Message us" button (m.me/<username>).
 const MESSENGER_PAGE = 'kerrkerr711'
-const messengerLink = (product, selection, price) => {
-    const text = `Hi! I'm interested in the ${product.productName} (${describeSelection(selection)}) - ${peso(price)}. Is it available?`
-    return `https://m.me/${MESSENGER_PAGE}?text=${encodeURIComponent(text)}`
+// m.me ignores prefilled text on most phones, so the button also copies the message
+// (with the product link, which Messenger previews with the photo) for the customer to paste.
+const messengerText = (product, selection, price) => {
+    const url = typeof window !== 'undefined' ? window.location.href.split('#')[0] : ''
+    return `Hi! I'm interested in the ${product.productName} (${describeSelection(selection)}) - ${peso(price)}. Is it available?\n${url}`
+}
+const messengerLink = (text) => `https://m.me/${MESSENGER_PAGE}?text=${encodeURIComponent(text)}`
+const copyText = (text) => {
+    if (navigator.clipboard?.writeText) return navigator.clipboard.writeText(text)
+    const area = document.createElement('textarea')
+    area.value = text
+    area.setAttribute('readonly', '')
+    area.style.position = 'fixed'
+    area.style.opacity = '0'
+    document.body.appendChild(area)
+    area.select()
+    const ok = document.execCommand('copy')
+    area.remove()
+    return ok ? Promise.resolve() : Promise.reject(new Error('copy failed'))
 }
 
 const LoadingSkeleton = () => (
@@ -451,7 +467,13 @@ const ProductDetail =
 
                                 <Button
                                     as={'a'}
-                                    href={messengerLink(product, sel, price)}
+                                    href={messengerLink(messengerText(product, sel, price))}
+                                    onClick={() => {
+                                        // Runs in the tap itself, so the browser allows the copy; the link then opens Messenger.
+                                        copyText(messengerText(product, sel, price))
+                                            .then(() => toast.info('Message copied - paste it in the Messenger chat and send', { autoClose: 6000 }))
+                                            .catch(() => {})
+                                    }}
                                     target={'_blank'}
                                     rel={'noopener noreferrer'}
                                     w={'full'}
@@ -496,5 +518,34 @@ export const matchDispatchToProps = dispatch => ({
     decreaseItemQuantity: (productId) => dispatch(decreaseQuantity(productId)),
     addToWishlist: (productId, prevWishlist) => dispatch(addToWishlist(productId, prevWishlist))
 })
+
+// Link-preview tags for Messenger/Facebook. The page itself renders in the browser,
+// so the product is loaded here too and _app writes the og: tags into the HTML.
+export const getServerSideProps = async ({ params, req }) => {
+    try {
+        const { db, isUuid, toProduct } = await import('../../lib/db')
+        if (!isUuid(params.product)) return { props: {} }
+        const sql = await db()
+        const rows = await sql`SELECT * FROM products WHERE id = ${params.product}`
+        if (!rows.length) return { props: {} }
+        const product = toProduct(rows[0])
+        const host = req.headers['x-forwarded-host'] || req.headers.host
+        const site = `https://${host}`
+        const image = (product.images || [])[0] || ''
+        return {
+            props: {
+                og: {
+                    title: `${product.productName} - ${priceLabel(product)}`,
+                    description: (product.desc || '').slice(0, 200),
+                    image: !image ? '' : /^https?:\/\//.test(image) ? image : `${site}${image}`,
+                    url: `${site}/${params.products}/${params.product}`
+                }
+            }
+        }
+    } catch (e) {
+        console.error(e)
+        return { props: {} }
+    }
+}
 
 export default connect(null, matchDispatchToProps)(ProductDetail)
