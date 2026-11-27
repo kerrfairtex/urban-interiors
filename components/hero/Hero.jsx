@@ -67,11 +67,9 @@ const HeroSlideshow = () => {
     const [hasFocus, setHasFocus] = useState(false);
     const touchStartX = useRef(null);
 
-    // Don't autoplay for people who asked their device to reduce motion.
-    useEffect(() => {
-        if (prefersReducedMotion) setUserPaused(true);
-    }, [prefersReducedMotion]);
-
+    // Autoplay even when the device asks for reduced motion (Android turns that on
+    // with "Remove animations" and often Battery Saver): slides then just crossfade
+    // without the zoom, and the Pause button still stops the rotation.
     const isRotating = !userPaused && !isHovered && !hasFocus;
 
     // Restart the countdown after every slide change, so a manual change
