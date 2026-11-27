@@ -76,17 +76,15 @@ const arrowButtonProps = {
 const HeroSlideshow = () => {
     const prefersReducedMotion = useReducedMotion();
     const [current, setCurrent] = useState(0);
-    // The Play/Pause button controls userPaused. Hover and keyboard focus only
-    // pause temporarily, so they never change what the button shows.
-    const [userPaused, setUserPaused] = useState(false);
+    // Rotation pauses while a mouse hovers or keyboard focus is inside.
     const [isHovered, setIsHovered] = useState(false);
     const [hasFocus, setHasFocus] = useState(false);
     const touchStartX = useRef(null);
 
     // Autoplay even when the device asks for reduced motion (Android turns that on
     // with "Remove animations" and often Battery Saver): slides then just crossfade
-    // without the zoom, and the Pause button still stops the rotation.
-    const isRotating = !userPaused && !isHovered && !hasFocus;
+    // without the zoom.
+    const isRotating = !isHovered && !hasFocus;
 
     // Restart the countdown after every slide change, so a manual change
     // gets the full interval before the next automatic one.
@@ -208,21 +206,6 @@ const HeroSlideshow = () => {
                 >
                     {current + 1} / {total}
                 </Text>
-                <Button
-                    type="button"
-                    marginLeft={2}
-                    aria-label={userPaused ? "Play image rotation" : "Pause image rotation"}
-                    onClick={() => setUserPaused((paused) => !paused)}
-                    minWidth={8}
-                    height={8}
-                    padding={0}
-                    color="white"
-                    background="blackAlpha.600"
-                    _hover={{ background: "blackAlpha.800" }}
-                    fontSize="xs"
-                >
-                    {userPaused ? "Play" : "Pause"}
-                </Button>
             </Flex>
         </Box>
     );
