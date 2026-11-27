@@ -8,7 +8,7 @@ import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { CaretRight, ChatCircleText, Heart, Minus, Phone, Plus, ShoppingCart } from 'phosphor-react'
+import { CaretRight, ChatCircleText, Heart, MessengerLogo, Minus, Phone, Plus, ShoppingCart } from 'phosphor-react'
 import { connect, useSelector } from 'react-redux'
 import { useEffect, useMemo, useState } from 'react'
 import { toast, ToastContainer } from 'react-toastify'
@@ -30,6 +30,12 @@ const Product3D = dynamic(() => import('../../components/product/Product3D'), {
 })
 
 const STORE_PHONE = '09637130812'
+// Facebook Page username for the "Message us" button (m.me/<username>).
+const MESSENGER_PAGE = 'kerrkerr711'
+const messengerLink = (product, selection, price) => {
+    const text = `Hi! I'm interested in the ${product.productName} (${describeSelection(selection)}) - ${peso(price)}. Is it available?`
+    return `https://m.me/${MESSENGER_PAGE}?text=${encodeURIComponent(text)}`
+}
 
 const LoadingSkeleton = () => (
     <Flex marginY={8} gap={10} width={'full'} flexDirection={{ base: 'column', lg: 'row' }}>
@@ -442,6 +448,20 @@ const ProductDetail =
                                         Call us
                                     </Button>
                                 </HStack>
+
+                                <Button
+                                    as={'a'}
+                                    href={messengerLink(product, sel, price)}
+                                    target={'_blank'}
+                                    rel={'noopener noreferrer'}
+                                    w={'full'}
+                                    color={'white'}
+                                    bgColor={'#0866FF'}
+                                    _hover={{ bgColor: '#0757D9' }}
+                                    _active={{ bgColor: '#0649B5' }}
+                                    leftIcon={<MessengerLogo size={20} weight={'fill'} />}>
+                                    Message us on Messenger
+                                </Button>
 
                                 <Button
                                     w={'full'}
