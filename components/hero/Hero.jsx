@@ -20,6 +20,13 @@ import kaElton13 from "../../public/ka-elton/ka-elton-13.jpg";
 import kaElton14 from "../../public/ka-elton/ka-elton-14.jpg";
 import kaElton15 from "../../public/ka-elton/ka-elton-15.jpg";
 import kaElton17 from "../../public/ka-elton/ka-elton-17.jpg";
+import kaElton18 from "../../public/ka-elton/ka-elton-18.jpg";
+import kaElton19 from "../../public/ka-elton/ka-elton-19.jpg";
+import kaElton20 from "../../public/ka-elton/ka-elton-20.jpg";
+import kaElton21 from "../../public/ka-elton/ka-elton-21.jpg";
+import kaElton22 from "../../public/ka-elton/ka-elton-22.jpg";
+import kaElton23 from "../../public/ka-elton/ka-elton-23.jpg";
+import kaElton24 from "../../public/ka-elton/ka-elton-24.jpg";
 
 const heroPhotos = [
     { src: kaElton01, alt: "Solid wood panelled door standing in the Ka Elton workshop" },
@@ -38,6 +45,13 @@ const heroPhotos = [
     { src: kaElton14, alt: "Stacks of timber in the open-air workshop" },
     { src: kaElton15, alt: "Craftsman finishing a long wooden shoe rack" },
     { src: kaElton17, alt: "Wooden shoe rack and shelving units in the workshop" },
+    { src: kaElton18, alt: "Craftsman spray-varnishing a slatted wooden bed frame" },
+    { src: kaElton19, alt: "Craftsman preparing a curved wooden bedside cabinet for finishing" },
+    { src: kaElton20, alt: "Craftsman spray-finishing a curved wooden bedside cabinet" },
+    { src: kaElton21, alt: "Curved wooden bedside cabinet with open shelves beside a matching side table" },
+    { src: kaElton22, alt: "Craftsman varnishing a wooden bed with a panelled headboard" },
+    { src: kaElton23, alt: "Row of new slatted wooden bed frames in the workshop yard" },
+    { src: kaElton24, alt: "Finished wooden bed frames lined up outside the workshop" },
 ];
 
 const SLIDE_INTERVAL_MS = 5000;
@@ -182,7 +196,6 @@ const HeroSlideshow = () => {
                 alignItems="center"
             >
                 <Text
-                    display={{ base: "block", lg: "none" }}
                     paddingX={3}
                     paddingY={1}
                     rounded="full"
@@ -193,37 +206,6 @@ const HeroSlideshow = () => {
                 >
                     {current + 1} / {total}
                 </Text>
-                <Flex display={{ base: "none", lg: "flex" }} alignItems="center">
-                {heroPhotos.map((photo, index) => (
-                    // 24x24 tap target around a small visible pill.
-                    <Box
-                        key={photo.alt}
-                        as="button"
-                        type="button"
-                        aria-label={`Show photo ${index + 1}: ${photo.alt}`}
-                        aria-current={index === current ? "true" : undefined}
-                        onClick={() => setCurrent(index)}
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                        minWidth={index === current ? 8 : 6}
-                        height={6}
-                        rounded="full"
-                        transition="min-width .4s"
-                        _focusVisible={{ outline: "2px solid white", outlineOffset: "0" }}
-                    >
-                        <Box
-                            as="span"
-                            width={index === current ? 6 : 2}
-                            height={2}
-                            rounded="full"
-                            bgColor={index === current ? "white" : "whiteAlpha.700"}
-                            boxShadow="0 0 2px rgba(0, 0, 0, 0.5)"
-                            transition="all .4s"
-                        />
-                    </Box>
-                ))}
-                </Flex>
                 <Button
                     type="button"
                     marginLeft={2}
