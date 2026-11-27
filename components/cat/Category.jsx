@@ -14,6 +14,7 @@ import desk from '../../public/desk.png'
 import sideboard from '../../public/sideboard.png'
 import coffeeTable from '../../public/coffee_table.png'
 import bench from '../../public/bench.png'
+import diningSet from '../../public/dining_set.png'
 import Link from 'next/link'
 import { CATEGORIES } from '../../utils/categories'
 import Image from 'next/image'
@@ -32,7 +33,7 @@ const rotateAnimation = `${rotateKeyFrames} 10s ease-in-out infinite`
 const icons = {
     'sofa': couch, 'bed': bed, 'nightstand': nightstand, 'dresser': dresser,
     'ward-robe': wardrobe, 'shoe-rack': shoeRack, 'shelf': shelf, 'tv-console': console,
-    'table-and-chair': chair, 'buffet-and-sideboard': sideboard, 'coffee-table': coffeeTable,
+    'table-and-chair': chair, 'dining-room-sets': diningSet, 'buffet-and-sideboard': sideboard, 'coffee-table': coffeeTable,
     'desk': desk, 'bench': bench, 'doors': door
 }
 

@@ -11,6 +11,7 @@ export const CATEGORIES = [
     { title: 'Shelf & Bookcase', slug: 'shelf' },
     { title: 'TV console', slug: 'tv-console' },
     { title: 'Table and chair', slug: 'table-and-chair' },
+    { title: 'Dining Room Sets', slug: 'dining-room-sets' },
     { title: 'Buffet & Sideboard', slug: 'buffet-and-sideboard' },
     { title: 'Coffee Table', slug: 'coffee-table' },
     { title: 'Desk', slug: 'desk' },
