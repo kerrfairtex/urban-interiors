@@ -20,6 +20,7 @@ import { getProduct } from '../../store/productReducer'
 import Meta from '../../components/meta/Meta'
 import { api } from '../../utils/api'
 import { categoryTitle } from '../../utils/categories'
+import { encodeMessengerRef } from '../../utils/messengerRef'
 import {
     chosen, describeSelection, getDimensions, getGroups, normalizeSelection, peso, priceLabel, unitPrice, VIEW_SLOTS
 } from '../../utils/productOptions'
@@ -30,8 +31,12 @@ const Product3D = dynamic(() => import('../../components/product/Product3D'), {
 })
 
 const STORE_PHONE = '09637130812'
-// Facebook Page username for the "Message us" button (m.me/<username>).
-const MESSENGER_PAGE = 'kerrkerr711'
+// "Message us" button. With NEXT_PUBLIC_MESSENGER_PAGE set (the Facebook Page username,
+// once the Page bot is set up), m.me opens the Page chat and the bot posts the product
+// card itself. Without it, the chat opens with the owner's profile and the button copies
+// the message for the customer to paste.
+const MESSENGER_BOT_PAGE = process.env.NEXT_PUBLIC_MESSENGER_PAGE || ''
+const MESSENGER_PAGE = MESSENGER_BOT_PAGE || 'kerrkerr711'
 // m.me ignores prefilled text on most phones, so the button also copies the message
 // (with the product link, which Messenger previews with the photo) for the customer to paste.
 const messengerText = (product, selection, price) => {
@@ -467,8 +472,11 @@ const ProductDetail =
 
                                 <Button
                                     as={'a'}
-                                    href={messengerLink(messengerText(product, sel, price))}
+                                    href={MESSENGER_BOT_PAGE
+                                        ? `https://m.me/${MESSENGER_BOT_PAGE}?ref=${encodeMessengerRef(pid, sel)}`
+                                        : messengerLink(messengerText(product, sel, price))}
                                     onClick={() => {
+                                        if (MESSENGER_BOT_PAGE) return
                                         // Runs in the tap itself, so the browser allows the copy; the link then opens Messenger.
                                         copyText(messengerText(product, sel, price))
                                             .then(() => toast.info('Message copied - paste it in the Messenger chat and send', { autoClose: 6000 }))
